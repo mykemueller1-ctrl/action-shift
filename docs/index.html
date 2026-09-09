@@ -32,15 +32,23 @@
     .err { color:var(--move); min-height:1.2em; }
     #out { margin-top:28px; border-top:1px solid var(--rule); padding-top:22px; display:none; }
     .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    #carry { display:none; margin-bottom:22px; border-color:var(--hold); }
+    #proof { margin-top:22px; padding-top:18px; border-top:1px solid var(--rule); }
+    select { display:block; width:100%; margin-top:6px; padding:10px 12px; border:1px solid var(--rule); background:#fff; font:inherit; }
   </style>
 </head>
 <body>
 <main>
+  <aside class="drop" id="carry">
+    <p class="eyebrow">Carry-forward</p>
+    <p id="carryline"></p>
+    <p class="mute" id="carrystatus"></p>
+  </aside>
   <p class="eyebrow">Never 86'd · Action Shift · Owner seat</p>
   <h1>Last night.</h1>
   <p class="mute">Community Tap is the house. Kenzy is the manager on this seat. Daily inbox is communitypizza2026@gmail.com. House pack is already set. Type two numbers. Close. Send. Food stays HOLD until a same-day count exists.</p>
   <ol class="mute steps">
-    <li>Type last night's net and labor, or drop the PDQ Z-report PDF.</li>
+    <li>After 8:05 AM Chicago the desk pulls last night's Z-report, or type net and labor / drop the PDF.</li>
     <li>Tap <b>Close last night</b>.</li>
     <li>Tap <b>Send this to Kenzy</b>. If it asks for a schedule, it failed.</li>
   </ol>
@@ -65,10 +73,11 @@
     <textarea id="dash" rows="5" placeholder="Subtotal $0.00\nCommission $0.00\nMarketing $0.00\nNet total $0.00"></textarea>
   </label>
   <label class="mute" style="margin-top:14px"><input id="food" type="checkbox" style="display:inline;width:auto" /> I have same-day invoices AND a count</label>
-  <div class="drop" id="drop">Drop the PDQ Z-report PDF, a .txt, or a .csv, or <input id="file" type="file" accept=".pdf,.txt,.csv,.tsv,.md" /></div>
+  <div class="drop" id="drop">Drop the PDQ Z-report PDF, a .txt, or a .csv, or <input id="file" type="file" accept=".pdf,.txt,.csv,.tsv,.md,.json" /></div>
   <input type="hidden" id="fileSource" value="" />
   <p class="mute" id="preview"></p>
   <button id="close">Close last night</button>
+  <button class="ghost" id="pull">Pull last night from the house inbox</button>
   <button class="ghost" id="example">Load CTap DoorDash example (Jan 2026, not last night)</button>
   <p class="err" id="err"></p>
 
@@ -83,11 +92,36 @@
     <pre id="text"></pre>
     <button id="send">Send this to Kenzy</button>
     <button class="ghost" id="mailinbox">Email a copy to the house inbox</button>
+    <div id="proof">
+      <p class="eyebrow">Did the move happen?</p>
+      <p id="proofstatus" class="mute"></p>
+      <p class="mute">Proof the shift created: deposit record, receipt, time-clock export, ticket detail, or exception log. A yes is not done.</p>
+      <label>Proof kind
+        <select id="proofkind">
+          <option value="">Choose one</option>
+          <option value="deposit record">deposit record</option>
+          <option value="receipt">receipt</option>
+          <option value="time-clock export">time-clock export</option>
+          <option value="ticket detail">ticket detail</option>
+          <option value="exception log">exception log</option>
+        </select>
+      </label>
+      <label>Proof note
+        <textarea id="proofnote" rows="2" placeholder="What the file shows. Not a verbal yes."></textarea>
+      </label>
+      <button type="button" id="proofdone">Done</button>
+      <button class="ghost" type="button" id="proofattach">Attach proof</button>
+      <button class="ghost" type="button" id="proofnodone">Not done</button>
+      <button class="ghost" type="button" id="proofmissing">Data missing</button>
+      <button class="ghost" type="button" id="prooffail">Fix failed</button>
+    </div>
   </section>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
-pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+if (typeof pdfjsLib !== "undefined") {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+}
 function money(n) {
   return n.toLocaleString("en-US", { style: "currency", currency: "USD" });
 }
@@ -118,13 +152,118 @@ function scrapeLabor(text) {
   if (z && z.netSales > 0 && z.laborDollars != null) return z;
   const netSales = grab(text, ["net sales", "net", "total sales", "sales"]);
   const laborDollars = grab(text, ["labor dollars", "labor cost", "labor", "payroll"]);
-  const moneyBits = [...text.matchAll(/\\$?([0-9]{1,3}(?:,[0-9]{3})+(?:\\.[0-9]{1,2})?|[0-9]+\\.[0-9]{2})/g)].map(m => Number(m[1].replace(/,/g, "")));
+  const moneyBits = [...text.matchAll(/\$?([0-9]{1,3}(?:,[0-9]{3})+(?:\.[0-9]{1,2})?|[0-9]+\.[0-9]{2})/g)].map(m => Number(m[1].replace(/,/g, "")));
   return {
     netSales: netSales ?? moneyBits[0],
     laborDollars: laborDollars ?? moneyBits[1],
   };
 }
+const LAST_CLOSE_KEY = "action-shift.ctap.last-close";
+const GMAIL_QUERY = "from:pdqreports@pdqpos.com newer_than:1d subject:EOD";
+function chicagoParts(now) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Chicago",
+    year: "numeric", month: "numeric", day: "numeric",
+    hour: "numeric", minute: "numeric", hourCycle: "h23"
+  }).formatToParts(now || new Date());
+  const n = (t) => Number(parts.find((p) => p.type === t).value);
+  return { year: n("year"), month: n("month"), day: n("day"), hour: n("hour"), minute: n("minute") };
+}
+function after805(now) {
+  const t = chicagoParts(now);
+  return t.hour > 8 || (t.hour === 8 && t.minute >= 5);
+}
+function lastNightStamp(now) {
+  const t = chicagoParts(now);
+  const prev = new Date(Date.UTC(t.year, t.month - 1, t.day) - 86400000);
+  return { year: prev.getUTCFullYear(), month: prev.getUTCMonth() + 1, day: prev.getUTCDate() };
+}
+function parseBizDate(value) {
+  if (!value) return null;
+  const slash = String(value).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (slash) return { month: +slash[1], day: +slash[2], year: +slash[3] };
+  const iso = String(value).trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (iso) return { year: +iso[1], month: +iso[2], day: +iso[3] };
+  return null;
+}
+function isLastNightDate(value, now) {
+  const p = parseBizDate(value);
+  const y = lastNightStamp(now);
+  return !!(p && p.year === y.year && p.month === y.month && p.day === y.day);
+}
+function normalizeLastClose(raw) {
+  if (!raw || typeof raw !== "object") return null;
+  const net = Number(raw.netSales);
+  const labor = Number(raw.laborDollars);
+  return {
+    house: "Community Tap",
+    manager: "Kenzy",
+    laborTargetPct: 28,
+    businessDate: typeof raw.businessDate === "string" ? raw.businessDate : undefined,
+    netSales: net > 0 ? net : undefined,
+    laborDollars: Number.isFinite(labor) && labor >= 0 ? labor : undefined,
+    food: "HOLD",
+    source: raw.source === "ZReport_Summary" ? "ZReport_Summary" : "",
+    gmailQuery: GMAIL_QUERY,
+    sentToManager: false,
+    error: typeof raw.error === "string" ? raw.error : undefined
+  };
+}
+function readStoredClose() {
+  try { return normalizeLastClose(JSON.parse(localStorage.getItem(LAST_CLOSE_KEY) || "null")); }
+  catch { return null; }
+}
+function writeStoredClose(close) {
+  try { localStorage.setItem(LAST_CLOSE_KEY, JSON.stringify(close)); } catch (e) {}
+}
+function applyLastClose(close, note) {
+  if (!close || !(close.netSales > 0) || close.laborDollars == null) return false;
+  $("net").value = String(close.netSales);
+  $("labor").value = String(close.laborDollars);
+  if (close.businessDate && !$("date").value) $("date").value = close.businessDate;
+  $("food").checked = false;
+  $("fileSource").value = close.source === "ZReport_Summary" ? "PDQ Z-report PDF" : $("fileSource").value;
+  $("err").textContent = "";
+  $("preview").textContent = note || ("Filled from this morning's Z-report. Food stays HOLD. Send is a tap. Search: " + GMAIL_QUERY);
+  return true;
+}
+function shouldApplyClose(close, pulled) {
+  if (!close || close.error) return false;
+  if (!(close.netSales > 0) || close.laborDollars == null) return false;
+  if (!isLastNightDate(close.businessDate)) return false;
+  return pulled || after805();
+}
+async function loadLastCloseFile() {
+  try {
+    const res = await fetch("last-close.json", { cache: "no-store" });
+    if (!res.ok) return null;
+    return normalizeLastClose(await res.json());
+  } catch (e) { return null; }
+}
+async function pullLastNight(pulled) {
+  let close = readStoredClose();
+  if (!shouldApplyClose(close, pulled)) {
+    const remote = await loadLastCloseFile();
+    if (remote) close = remote;
+  }
+  if (shouldApplyClose(close, pulled)) {
+    writeStoredClose(close);
+    applyLastClose(close);
+    return;
+  }
+  if (close && close.error) {
+    $("err").textContent = close.error;
+    $("preview").textContent = "";
+    return;
+  }
+  if (pulled) {
+    $("err").textContent = "No Z-report yet. Type the two numbers. Photos do not parse.";
+  } else if (!after805()) {
+    $("preview").textContent = "Desk waits until 8:05 AM America/Chicago. Drop the Z-report or type the two numbers.";
+  }
+}
 async function pdfToText(buf) {
+  if (typeof pdfjsLib === "undefined") throw new Error("pdfjs missing");
   const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
   const pages = [];
   for (let i = 1; i <= pdf.numPages; i++) {
@@ -183,6 +322,55 @@ function closeNight(raw) {
   };
 }
 const $ = (id) => document.getElementById(id);
+const LAST_MOVE_KEY = "action-shift.ctap.last-move";
+const PROOF_KINDS = ["deposit record", "receipt", "time-clock export", "ticket detail", "exception log"];
+const CLAIM_BOUNDARY = "Typed values stay Unverified until reconciled to a source. Variance is review work. Not theft. Not guaranteed savings.";
+function emptyMove() {
+  return {
+    house: "Community Tap", manager: "Kenzy", owner: "Kenzy", action: "", verdict: "",
+    claimBoundary: CLAIM_BOUNDARY, evidenceStatus: "open", proofKind: "", proofNote: ""
+  };
+}
+function forbiddenProof(text) {
+  return /schedule photo|who works|5\s*[-–to]+\s*7/i.test(text || "");
+}
+function readMove() {
+  try { return Object.assign(emptyMove(), JSON.parse(localStorage.getItem(LAST_MOVE_KEY) || "null") || {}); }
+  catch (e) { return emptyMove(); }
+}
+function writeMove(move) {
+  try { localStorage.setItem(LAST_MOVE_KEY, JSON.stringify(move)); } catch (e) {}
+}
+function hasMove(move) {
+  return !!(move && (move.action || move.verdict || move.observedDollars != null || move.businessDate));
+}
+function unresolved(move) {
+  return hasMove(move) && move.evidenceStatus !== "verified" && move.evidenceStatus !== "not-done";
+}
+function sameChicagoDay(value, now) {
+  const p = parseBizDate(value);
+  if (!p) return false;
+  const t = chicagoParts(now);
+  return p.year === t.year && p.month === t.month && p.day === t.day;
+}
+function paintProof(move) {
+  $("proofstatus").textContent = hasMove(move)
+    ? (move.verdict || "MOVE") + " · " + (move.evidenceStatus || "open") + " · " + CLAIM_BOUNDARY
+    : CLAIM_BOUNDARY;
+  $("proofkind").value = move.proofKind || "";
+  $("proofnote").value = move.proofNote || "";
+  if (unresolved(move) && hasMove(move) && !sameChicagoDay(move.businessDate)) {
+    $("carry").style.display = "block";
+    $("carryline").textContent = (move.businessDate || "Yesterday") + " · " + (move.action || "One move is still open.");
+    $("carrystatus").textContent = "Status: " + move.evidenceStatus + ". A yes is not done.";
+  } else {
+    $("carry").style.display = "none";
+  }
+}
+function persistMove(move) {
+  writeMove(move);
+  paintProof(move);
+}
 function preview() {
   const p = scrapeLabor($("paste").value);
   const d = scrapeDash($("dash").value);
@@ -195,6 +383,17 @@ function preview() {
 $("paste").addEventListener("input", preview);
 $("dash").addEventListener("input", preview);
 function eatText(text, source) {
+  const maybeJson = text.trim().startsWith("{") ? (() => { try { return JSON.parse(text); } catch (e) { return null; } })() : null;
+  if (maybeJson && (maybeJson.netSales || maybeJson.gmailQuery || maybeJson.food === "HOLD")) {
+    const close = normalizeLastClose(maybeJson);
+    if (applyLastClose(close, "Fetched last-close. Food stays HOLD. Send is a tap.")) {
+      writeStoredClose(close);
+      $("paste").value = "PDQ Z-report\nSubtotal (net) $" + close.netSales.toFixed(2) + "\nLabor Summary $" + close.laborDollars.toFixed(2);
+    } else {
+      $("err").textContent = (close && close.error) || "Need Subtotal and Labor Summary Total. Photos do not parse. Type the two numbers.";
+    }
+    return;
+  }
   const z = scrapePdqZ(text);
   if (z && z.netSales > 0 && z.laborDollars != null) {
     $("paste").value = "PDQ Z-report\nSubtotal (net) $" + z.netSales.toFixed(2) + "\nLabor Summary $" + z.laborDollars.toFixed(2);
@@ -202,8 +401,14 @@ function eatText(text, source) {
     $("labor").value = String(z.laborDollars);
     if (z.businessDate && !$("date").value) $("date").value = z.businessDate;
     $("fileSource").value = source || z.source;
+    $("food").checked = false;
+    writeStoredClose({
+      house: "Community Tap", manager: "Kenzy", laborTargetPct: 28,
+      businessDate: z.businessDate, netSales: z.netSales, laborDollars: z.laborDollars,
+      food: "HOLD", source: "ZReport_Summary", gmailQuery: GMAIL_QUERY, sentToManager: false
+    });
     preview();
-    $("preview").textContent = "PDQ Z-report: net " + money(z.netSales) + " (Subtotal, not Grand Total) · labor " + money(z.laborDollars);
+    $("preview").textContent = "PDQ Z-report: net " + money(z.netSales) + " (Subtotal, not Grand Total) · labor " + money(z.laborDollars) + ". Food stays HOLD.";
     $("err").textContent = "";
     return;
   }
@@ -216,6 +421,11 @@ async function eatFile(f) {
   if (!f) return;
   const name = f.name || "";
   const type = f.type || "";
+  if (/void[_\s-]*promo|hourly[_\s-]*sales/i.test(name)) {
+    $("err").textContent = "Need the Z-report Summary PDF (Labor Summary + Subtotal). Hourly and void PDFs do not close the night.";
+    $("preview").textContent = "";
+    return;
+  }
   if (/\.(png|jpe?g|gif|webp|heic|heif)$/i.test(name) || type.startsWith("image/")) {
     $("err").textContent = "Photos of Z-outs do not parse. Drop the PDQ Z-report PDF or type the two numbers.";
     return;
@@ -262,6 +472,53 @@ $("example").onclick = () => {
   $("dash").value = "Community Tap DoorDash Jan 2026 example\nSubtotal $8,207.63\nCommission $1,764.27\nMarketing $830.38\nNet total $7,646.86\nEligible = Subtotal. Tips and customer fees do not count.";
   $("preview").textContent = "Example only. Not last night. Paste real PDQ labor to close the night.";
 };
+$("pull").onclick = () => { void pullLastNight(true); };
+void pullLastNight(false);
+void (async function loadCarry() {
+  let move = readMove();
+  if (!hasMove(move)) {
+    try {
+      const res = await fetch("last-move.json", { cache: "no-store" });
+      if (res.ok) move = Object.assign(emptyMove(), await res.json());
+    } catch (e) {}
+  }
+  paintProof(move);
+})();
+function applyProofReply(reply) {
+  const move = readMove();
+  if (!hasMove(move)) return;
+  if (forbiddenProof(reply)) {
+    $("err").textContent = "Need a deposit, receipt, time-clock export, ticket detail, or exception log.";
+    return;
+  }
+  persistMove(Object.assign({}, move, { evidenceStatus: reply }));
+}
+$("proofdone").onclick = () => {
+  const move = readMove();
+  const typed = ($("proofnote").value || "").trim();
+  if (forbiddenProof(typed)) {
+    $("err").textContent = "Need a deposit, receipt, time-clock export, ticket detail, or exception log.";
+    return;
+  }
+  if (move.proofKind && PROOF_KINDS.indexOf(move.proofKind) >= 0) {
+    persistMove(Object.assign({}, move, { evidenceStatus: "verified" }));
+    return;
+  }
+  persistMove(Object.assign({}, move, { evidenceStatus: "acknowledged" }));
+};
+$("proofattach").onclick = () => {
+  const move = readMove();
+  const kind = $("proofkind").value;
+  const note = ($("proofnote").value || "").trim();
+  if (forbiddenProof(kind + " " + note) || PROOF_KINDS.indexOf(kind) < 0 || !note) {
+    $("err").textContent = "Attach one allowed proof kind and a note. A yes is not done.";
+    return;
+  }
+  persistMove(Object.assign({}, move, { proofKind: kind, proofNote: note, evidenceStatus: "done-awaiting-proof" }));
+};
+$("proofnodone").onclick = () => applyProofReply("not-done");
+$("proofmissing").onclick = () => applyProofReply("data-missing");
+$("prooffail").onclick = () => applyProofReply("fix-failed");
 $("close").onclick = () => {
   $("err").textContent = "";
   const p = scrapeLabor($("paste").value);
@@ -308,6 +565,12 @@ $("close").onclick = () => {
   $("text").textContent = body;
   $("send").textContent = "Send this to " + mgr;
   $("out").style.display = "block";
+  persistMove({
+    house: house, manager: mgr, owner: mgr,
+    businessDate: $("date").value || undefined,
+    verdict: r.verdict, action: r.move, observedDollars: labor,
+    claimBoundary: CLAIM_BOUNDARY, evidenceStatus: "open", proofKind: "", proofNote: ""
+  });
   $("send").onclick = async () => {
     await navigator.clipboard.writeText(body);
     $("send").textContent = "Copied — paste to " + mgr;

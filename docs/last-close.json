@@ -11,6 +11,6 @@
   "food": "HOLD",
   "source": "ZReport_Summary",
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
-  "sentToManager": false,
+  "sentToManager": true,
   "ingestedAt": "2026-09-09T13:51:00Z"
 }
