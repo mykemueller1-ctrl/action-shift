@@ -24,21 +24,21 @@
 </head>
 <body>
 <main>
-  <p class="eyebrow">Action Shift</p>
+  <p class="eyebrow">Action Shift · Never 86'd</p>
   <h1>Last night.</h1>
-  <p class="mute">Drop two numbers. I will not ask for a schedule photo. I will not invent food cost.</p>
+  <p class="mute">This house is Community Tap. Kenzy runs it. Lab dollars from another house stay labeled lab. I will not invent food cost. I will not ask for a schedule photo.</p>
 
-  <label>House <input id="store" value="This house" /></label>
-  <label>Business date <input id="date" placeholder="2026-08-31" /></label>
-  <label>Net sales <input id="net" placeholder="3408.15" /></label>
-  <label>Labor dollars <input id="labor" placeholder="1211.85" /></label>
+  <label>House <input id="store" value="Community Tap" /></label>
+  <label>Business date <input id="date" placeholder="last night" /></label>
+  <label>Net sales <input id="net" placeholder="paste CTap net" /></label>
+  <label>Labor dollars <input id="labor" placeholder="paste CTap labor" /></label>
   <label>House labor target % <input id="target" value="30" /></label>
   <label>One manager <input id="mgr" value="Kenzy" /></label>
   <label>Or paste a Toast line
-    <textarea id="paste" rows="4" placeholder="Net $3,408.15  Labor $1,211.85"></textarea>
+    <textarea id="paste" rows="4" placeholder="Net $0.00  Labor $0.00"></textarea>
   </label>
   <p class="mute" id="preview"></p>
-  <button id="load">Load Grill test night</button>
+  <button id="load">Load lab fixture (not CTap)</button>
   <button id="close">Close last night</button>
   <p class="err" id="err"></p>
 
@@ -95,14 +95,14 @@ $("paste").addEventListener("input", () => {
   $("preview").textContent = p.netSales ? ("Read from paste: net " + p.netSales + " \u00b7 labor " + (p.laborDollars ?? "\u2014")) : "";
 });
 $("load").onclick = () => {
-  $("store").value = "Grill";
-  $("date").value = "2026-08-31";
+  $("store").value = "Lab fixture — not Community Tap";
+  $("date").value = "lab";
   $("net").value = "3408.15";
   $("labor").value = "1211.85";
   $("target").value = "30";
-  $("mgr").value = "Kenzy";
-  $("paste").value = "Net $3,408.15 Labor $1,211.85";
-  $("preview").textContent = "Read from paste: net 3408.15 \u00b7 labor 1211.85";
+  $("mgr").value = "the manager";
+  $("paste").value = "LAB Net $3,408.15 Labor $1,211.85 — not CTap";
+  $("preview").textContent = "Lab fixture only. Not Community Tap. Not Kenzy's night.";
 };
 $("close").onclick = () => {
   $("err").textContent = "";
@@ -117,7 +117,8 @@ $("close").onclick = () => {
   }
   const r = closeNight({ netSales: net, laborDollars: labor, laborTargetPct: target, businessDate: $("date").value });
   const mgr = $("mgr").value || "the manager";
-  const body = "Hey " + mgr + " \u2014\n" + r.sendText;
+  const house = $("store").value || "this house";
+  const body = "Hey " + mgr + " \u2014\n" + house + "\n" + r.sendText;
   $("verdict").textContent = r.verdict;
   $("pct").textContent = r.laborPct.toFixed(2) + "%";
   $("formula").textContent = r.formula;
