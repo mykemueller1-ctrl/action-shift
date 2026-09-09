@@ -1,0 +1,11 @@
+:root {
+  --paper: #f4efe6;
+  --ink: #1a1714;
+  --mute: #6b645b;
+  --rule: #d9d0c3;
+  --move: #8b1e1e;
+  --hold: #8a6a12;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--paper); color: var(--ink); font-family: Georgia, serif; }
+button, input { font: inherit; }
