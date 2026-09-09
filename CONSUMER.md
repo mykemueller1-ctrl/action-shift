@@ -32,7 +32,8 @@ Net and labor start **blank**. Never autoload another house's dollars.
 2. Pull yesterday from the house inbox, or paste two numbers.
    - Search: `from:pdqreports@pdqpos.com newer_than:1d`
    - PDQ EOD today still also lands on mykemueller1@gmail.com.
-   - Photos of Z-outs do not parse. Type or paste.
+   - Drop the official PDQ **Z-report Summary PDF**. Net = Subtotal (ex-tax). Labor = Labor Summary Total. Not Grand Total.
+   - Photos of Z-outs do not parse. Type those two numbers if the PDF has no text.
 3. Tap **Close last night**.
 4. Read three tiles: Labor % · Versus target · Food.
 5. Tap **Send this to [manager]**. One person. No group chat.

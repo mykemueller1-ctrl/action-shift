@@ -17,7 +17,7 @@ DoorDash packets have already been forwarded to communitypizza2026@gmail.com.
 
 1. Connect the house Gmail when asked.
 2. Search `from:pdqreports@pdqpos.com newer_than:1d`
-3. Paste net + labor into the desk. Photos do not parse.
+3. Drop the Z-report Summary PDF on the desk, or paste net + labor. Photos do not parse. Net is Subtotal, not Grand Total.
 4. Close last night. Send this to Kenzy. Email a copy to the house inbox.
 
 Do not copy Grill dollars into this inbox.

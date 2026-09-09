@@ -16,7 +16,7 @@ Open either door:
 Then:
 
 1. Leave House = Community Tap and manager = Kenzy.
-2. Paste CTap net sales + labor dollars from PDQ (or from communitypizza2026@gmail.com). Not Grill. Not Bamba.
+2. Drop the PDQ Z-report Summary PDF, or paste CTap net + labor. Not Grill. Not Bamba. Photos do not parse.
 3. Hit **Close last night**.
 4. Read the three tiles. Food stays HOLD unless you actually have a count.
 5. Hit **Send this to Kenzy** and paste the text.
