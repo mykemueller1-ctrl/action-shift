@@ -8,7 +8,8 @@ No Copilot. No never86. Founder is not the debugger.
 - After Close last night the desk persists one move. Night row: Did the move happen?
 - Done / yes with no proof = acknowledged. Proof kind + note = done-awaiting-proof. Verified only when a kind is attached. Also: not-done, data-missing, fix-failed.
 - Unresolved last-move carries to the top next morning.
-- House pack still Community Tap / Kenzy / 28% / blank net+labor / food HOLD. Lab paste still 35.56% / ~$258 heavy / MOVE / HOLD. Send is a tap.
+- House pack still Community Tap / Kenzy / 28% / blank net+labor / food HOLD. Lab paste still 35.56% / ~$258 heavy / MOVE / HOLD.
+- Kenzy already has the 9/8 labor note. Do not send again. last-close `sentToManager` is true. last-move is acknowledged, not verified. Tomorrow’s file still has to prove the mid cut.
 
 ## Do not
 Auto-text Kenzy. Schedule photo. Who works 5–7. Rewrite close math. Vercel.

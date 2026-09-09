@@ -2,10 +2,11 @@
   "house": "Community Tap",
   "manager": "Kenzy",
   "owner": "Kenzy",
-  "action": "",
-  "verdict": "",
+  "businessDate": "9/8/2026",
+  "verdict": "MOVE",
+  "action": "Cut one mid shift before the rush. Keep the peak staffed.",
   "claimBoundary": "Typed values stay Unverified until reconciled to a source. Variance is review work. Not theft. Not guaranteed savings.",
-  "evidenceStatus": "open",
+  "evidenceStatus": "acknowledged",
   "proofKind": "",
-  "proofNote": ""
+  "proofNote": "Kenzy was told. A text is not proof."
 }
