@@ -1,7 +1,11 @@
-/** Pull net + labor from pasted Toast / notes text. */
+/** Pull net + labor from pasted Toast, PDQ Z-out, or notes. */
 export function scrapeTotals(text: string): { netSales?: number; laborDollars?: number } {
-  const labeledNet = text.match(/net[^0-9$]{0,16}\$?([0-9,]+(?:\.[0-9]{1,2})?)/i);
-  const labeledLabor = text.match(/labor[^0-9$]{0,16}\$?([0-9,]+(?:\.[0-9]{1,2})?)/i);
+  const labeledNet =
+    text.match(/net(?:\s*sales)?[^0-9$]{0,16}\$?([0-9,]+(?:\.[0-9]{1,2})?)/i) ||
+    text.match(/total\s*sales[^0-9$]{0,16}\$?([0-9,]+(?:\.[0-9]{1,2})?)/i) ||
+    text.match(/sales\s*total[^0-9$]{0,16}\$?([0-9,]+(?:\.[0-9]{1,2})?)/i);
+  const labeledLabor =
+    text.match(/labor(?:\s*(?:dollars|cost|\$|hours))?[^0-9$]{0,20}\$?([0-9,]+(?:\.[0-9]{1,2})?)/i);
   const money = [...text.matchAll(/\$?([0-9]{1,3}(?:,[0-9]{3})+(?:\.[0-9]{1,2})?|[0-9]+\.[0-9]{2})/g)].map(
     (m) => Number(m[1].replace(/,/g, "")),
   );
