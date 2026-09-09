@@ -59,6 +59,37 @@ test("PDQ Z-report uses Subtotal as net and Labor Summary Total, not Grand Total
   assert.doesNotMatch(result.sendText, /schedule/i);
 });
 
+test("June CTap Z-reports: 6/7 light HOLD, 6/8 MOVE, never Grand Total", () => {
+  const jun7 = scrapePdqZReport(readFileSync(join(fixtures, "pdq-zreport-2026-06-07.txt"), "utf8"));
+  const jun8 = scrapePdqZReport(readFileSync(join(fixtures, "pdq-zreport-2026-06-08.txt"), "utf8"));
+  assert.equal(jun7?.netSales, 5925.28);
+  assert.equal(jun7?.laborDollars, 1609.27);
+  assert.notEqual(jun7?.netSales, 6230.41);
+  const light = closeNight({
+    store: "Community Tap",
+    netSales: jun7!.netSales!,
+    laborDollars: jun7!.laborDollars!,
+    laborTargetPct: 28,
+    managerName: "Kenzy",
+    hasFoodEvidence: false,
+  });
+  assert.ok(light.heavyDollars < -25);
+  assert.equal(light.verdict, "HOLD");
+  assert.equal(jun8?.netSales, 2725.76);
+  assert.equal(jun8?.laborDollars, 1155.25);
+  assert.notEqual(jun8?.netSales, 2842.54);
+  const heavy = closeNight({
+    store: "Community Tap",
+    netSales: jun8!.netSales!,
+    laborDollars: jun8!.laborDollars!,
+    laborTargetPct: 28,
+    managerName: "Kenzy",
+    hasFoodEvidence: false,
+  });
+  assert.equal(heavy.verdict, "MOVE");
+  assert.doesNotMatch(heavy.sendText, /schedule/i);
+});
+
 test("Toast CSVs fill net + labor and still skip food", () => {
   const sales = readFileSync(join(fixtures, "sales-summary.csv"), "utf8");
   const labor = readFileSync(join(fixtures, "labor-breakdown.csv"), "utf8");

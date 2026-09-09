@@ -1,14 +1,16 @@
 # Night orders — 9 Sep 2026
 
-Myke gave Grok access. Do not text. Kenzy already has the labor note. Do not send again.
+Yes: one seat is enough. Pulse, voids, and 11 agents stay off this desk.
 
 ## Done
-- PR #9 is on main. Job A + Job N landed.
-- A2 pipe: `scripts/ingest-eod.mjs` / `npm run ingest` writes `docs/last-close.json` from ZReport_Summary text only. Void_Promo ignored. Food HOLD. Same-night sentToManager stays true.
-- Netlify function `ctap-eod` scheduled 13:05/14:05 UTC (8:05 Chicago). Tokens from Netlify env only. Missing env does not wipe the desk.
-- Pull last night still reads last-close.json, then the function if present.
-- Grok checked Netlify `action-shift`: **no GMAIL_* secrets**. Live house-box fetch will not run until those three keys exist for communitypizza2026@gmail.com. Drop / npm run ingest still works.
-- Tomorrow proof kind for the mid cut: **time-clock export** first. Deposit / receipt / ticket detail also allowed. A text is not proof.
+- Owner seat loop on `docs/index.html`: what happened → one MOVE/HOLD → Send (human) → time-clock proof.
+- GMAIL secrets are NO. Ingest stays drop / `npm run ingest`. House box communitypizza2026 only.
+- Kenzy already has 9/8 labor. Do not send again. Move acknowledged until a time-clock export lands. Names are not read.
+- June CTap Z fixtures (totals only): 6/7 net $5,925.28 labor $1,609.27 light HOLD; 6/8 net $2,725.76 labor $1,155.25 MOVE. Never Grand Total.
+- One MOVE at a time. Unresolved cut stays until verified or not-done.
+
+## Ask SuperGrok
+Time-clock is the proof kind. After you read this, ask Cursor whether #16 (this seat) is ready to merge. No second Kenzy text.
 
 ## Do not
-never86. Vercel. Copilot. Auto-text Kenzy. Job B. Invent food.
+never86. Pulse. Void names. Menu-mix PR #12. Vercel. Invent food.

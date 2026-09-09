@@ -46,11 +46,11 @@
   </aside>
   <p class="eyebrow">Never 86'd · Action Shift · Owner seat</p>
   <h1>Last night.</h1>
-  <p class="mute">Community Tap is the house. Kenzy is the manager on this seat. Daily inbox is communitypizza2026@gmail.com. House pack is already set. Type two numbers. Close. Send. Food stays HOLD until a same-day count exists.</p>
+  <p class="mute">Find the leak. Assign the fix. Keep the receipt. Community Tap · Kenzy · 28%. One action. Food HOLD until same-day invoices AND a count. House inbox communitypizza2026@gmail.com.</p>
   <ol class="mute steps">
-    <li>After 8:05 AM Chicago the desk pulls last night's Z-report, or type net and labor / drop the PDF.</li>
-    <li>Tap <b>Close last night</b>.</li>
-    <li>Tap <b>Send this to Kenzy</b>. If it asks for a schedule, it failed.</li>
+    <li>What happened? After 8:05 Chicago, Pull last night or drop the Z-report. Net = Subtotal. Not Grand Total.</li>
+    <li>What next? Close last night. One MOVE or HOLD. Tap <b>Send this to Kenzy</b>. A human tap. If it asks for a schedule, it failed.</li>
+    <li>Did it change? Drop a time-clock export (or deposit / receipt / ticket / exception). A yes is not done.</li>
   </ol>
 
   <div class="row">
@@ -73,7 +73,7 @@
     <textarea id="dash" rows="5" placeholder="Subtotal $0.00\nCommission $0.00\nMarketing $0.00\nNet total $0.00"></textarea>
   </label>
   <label class="mute" style="margin-top:14px"><input id="food" type="checkbox" style="display:inline;width:auto" /> I have same-day invoices AND a count</label>
-  <div class="drop" id="drop">Drop the PDQ Z-report PDF, a .txt, or a .csv, or <input id="file" type="file" accept=".pdf,.txt,.csv,.tsv,.md,.json" /></div>
+  <div class="drop" id="drop">Drop the PDQ Z-report, a time-clock export, or last-close.json. Not Void_Promo. <input id="file" type="file" accept=".pdf,.txt,.csv,.tsv,.md,.json" /></div>
   <input type="hidden" id="fileSource" value="" />
   <p class="mute" id="preview"></p>
   <button id="close">Close last night</button>
@@ -422,10 +422,32 @@ function eatText(text, source) {
   $("fileSource").value = source || "";
   preview();
 }
+function proofKindFromName(name) {
+  if (/schedule photo|who works|5\s*[-–to]+\s*7|void[_\s-]*promo|hourly[_\s-]*sales/i.test(name || "")) return "";
+  if (/time[_\s-]*clock|timecard/i.test(name)) return "time-clock export";
+  if (/deposit/i.test(name)) return "deposit record";
+  if (/receipt/i.test(name)) return "receipt";
+  if (/ticket/i.test(name)) return "ticket detail";
+  if (/exception/i.test(name)) return "exception log";
+  return "";
+}
 async function eatFile(f) {
   if (!f) return;
   const name = f.name || "";
   const type = f.type || "";
+  const proofKind = proofKindFromName(name);
+  if (proofKind) {
+    const move = readMove();
+    persistMove(Object.assign({}, move, {
+      proofKind: proofKind,
+      proofNote: "Attached " + proofKind + ". Staff names were not read.",
+      evidenceStatus: "done-awaiting-proof"
+    }));
+    $("out").style.display = "block";
+    $("err").textContent = "";
+    $("preview").textContent = "Proof attached: " + proofKind + ". Names stay off this desk. A yes is not done.";
+    return;
+  }
   if (/void[_\s-]*promo|hourly[_\s-]*sales/i.test(name)) {
     $("err").textContent = "Need the Z-report Summary PDF (Labor Summary + Subtotal). Hourly and void PDFs do not close the night.";
     $("preview").textContent = "";
@@ -486,6 +508,7 @@ void (async function loadCarry() {
       const res = await fetch("last-move.json", { cache: "no-store" });
       if (res.ok) move = Object.assign(emptyMove(), await res.json());
     } catch (e) {}
+    if (hasMove(move)) writeMove(move);
   }
   paintProof(move);
 })();
@@ -570,12 +593,14 @@ $("close").onclick = () => {
   $("text").textContent = body;
   $("send").textContent = "Send this to " + mgr;
   $("out").style.display = "block";
-  persistMove({
+  const nextMove = {
     house: house, manager: mgr, owner: mgr,
     businessDate: $("date").value || undefined,
     verdict: r.verdict, action: r.move, observedDollars: labor,
     claimBoundary: CLAIM_BOUNDARY, evidenceStatus: "open", proofKind: "", proofNote: ""
-  });
+  };
+  const prior = readMove();
+  persistMove(prior && prior.verdict === "MOVE" && prior.evidenceStatus !== "verified" && prior.evidenceStatus !== "not-done" ? prior : nextMove);
   $("send").onclick = async () => {
     await navigator.clipboard.writeText(body);
     $("send").textContent = "Copied — paste to " + mgr;

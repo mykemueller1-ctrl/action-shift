@@ -8,7 +8,8 @@ Founder gave access. Do not text Kenzy again.
 |---|---|---|
 | A | 8:05 AM Z-report ingest | **MERGED** PR #9 |
 | N | Night proof + carry-forward | **MERGED** PR #9 |
-| A2 | Live house inbox → last-close.json | **LANDING** on grok/a2-live-inbox. ingest-eod + Netlify 8:05. Desk works with no tokens. GMAIL_* on Netlify = **NO**. |
+| A2 | Live house inbox → last-close.json | **ON MAIN**. GMAIL_* = **NO**. Drop / npm run ingest. |
+| SEAT | One-seat operator loop | **THIS BRANCH** `cursor/one-seat-operator-0bfb`. Time-clock proof. June Z fixtures. One MOVE cooldown. |
 | 4 | House inbox docs | OPEN PR #4, dirty. Do not rebuild. |
 | MIX | PDQ food/pop/liquor/beer mix | **HOLD** PR #12. Food cost stays HOLD. |
 | B | Stranger Gmail login | LATER |

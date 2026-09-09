@@ -58,7 +58,24 @@ export function isAllowedProofKind(kind: string): kind is ProofKind {
 }
 
 export function isForbiddenProof(text: string): boolean {
-  return /schedule photo|who works|5\s*[-–to]+\s*7/i.test(text);
+  return /schedule photo|who works|5\s*[-–to]+\s*7|void[_\s-]*promo/i.test(text);
+}
+
+/** Filename only. Do not parse payroll or staff names out of a time-clock file. */
+export function proofKindFromFilename(name: string): ProofKind | "" {
+  if (!name || isForbiddenProof(name) || /void[_\s-]*promo|hourly[_\s-]*sales/i.test(name)) return "";
+  if (/time[_\s-]*clock|timecard/i.test(name)) return "time-clock export";
+  if (/deposit/i.test(name)) return "deposit record";
+  if (/receipt/i.test(name)) return "receipt";
+  if (/ticket/i.test(name)) return "ticket detail";
+  if (/exception/i.test(name)) return "exception log";
+  return "";
+}
+
+/** One MOVE at a time. Do not fire a second labor cut until yesterday is verified or not-done. */
+export function keepCooldownMove(prior: LastMove | null | undefined, next: LastMove): LastMove {
+  if (isUnresolved(prior) && prior?.verdict === "MOVE") return prior;
+  return next;
 }
 
 export function openMove(input: {
