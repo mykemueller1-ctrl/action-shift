@@ -27,7 +27,8 @@ https://cdn.jsdelivr.net/gh/mykemueller1-ctrl/action-shift@02af3dc/docs/index.ht
    - Food tile must stay HOLD unless the same-day count box is checked.
    - Send this to Kenzy copies a text. No schedule ask.
 5. DoorDash box: eligible sales = Subtotal. Tips/tax/customer fees do not count.
-6. If anything on that page is broken, fix only that page. Commit to this repo.
+6. PDQ Z-report PDF drop is allowed. Net = Subtotal. Labor = Labor Summary Total. Photos still do not parse.
+7. If anything on that page is broken, fix only that page. Commit to this repo.
 
 ## Do not build
 Eleven agents. Command Center. Void Hunter webhooks. PIN pads. Payroll. HubSpot. Vercel. Inventory. Schedule photos. Bamba dollars as CTap defaults.
