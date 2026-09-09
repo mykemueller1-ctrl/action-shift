@@ -76,6 +76,12 @@ test("empty last-move does not carry; unresolved yesterday does", () => {
   assert.equal(shouldCarryForward(verifyMove(attachProof(open, "deposit record", "Bag tape.")), morning), false);
 });
 
+test("committed last-move.json has no live CTap dollars", () => {
+  const json = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "..", "docs", "last-move.json"), "utf8");
+  assert.doesNotMatch(json, /3463|1324|3408|1211/);
+  assert.match(json, /"evidenceStatus": "open"/);
+});
+
 test("not-done, data-missing, and fix-failed are locked states", () => {
   const move = openMove({
     verdict: "HOLD",

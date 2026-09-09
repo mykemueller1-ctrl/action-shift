@@ -2,7 +2,6 @@
   "house": "Community Tap",
   "manager": "Kenzy",
   "laborTargetPct": 28,
-<<<<<<< HEAD
   "businessDate": "9/8/2026",
   "netSales": 3463.35,
   "laborDollars": 1324.41,
@@ -14,10 +13,4 @@
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
   "sentToManager": false,
   "ingestedAt": "2026-09-09T13:51:00Z"
-=======
-  "food": "HOLD",
-  "source": "",
-  "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
-  "sentToManager": false
->>>>>>> 2b987eb (Job A: 8:05 AM Z-report ingest fills net and labor.)
 }
