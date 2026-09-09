@@ -108,6 +108,14 @@ test("desk prefills last night after 8:05 Chicago and ignores stale closes", () 
   assert.equal(shouldPrefillDesk(parseLastClose({ food: "COUNTED", netSales: 10 }), after805), false);
 });
 
+test("desk HTML money scrape regex is valid so Close can bind", () => {
+  const html = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "..", "docs", "index.html"), "utf8");
+  const literal = html.match(/matchAll\((\/.*?\/g)\)/);
+  assert.ok(literal, "desk still scrapes pasted dollars");
+  assert.doesNotThrow(() => eval(literal![1]));
+  assert.doesNotMatch(html, /matchAll\(\/\\\\\$\?/);
+});
+
 test("fetchMorningClose reads last-close JSON and still HOLDs food", async () => {
   const written = runMorningIngest(eodFiles, after805);
   const fetched = await fetchMorningClose({ lastCloseJson: JSON.stringify(written), now: after805 });
