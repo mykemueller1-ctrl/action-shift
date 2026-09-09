@@ -28,16 +28,14 @@ Net and labor start **blank**. Never autoload another house's dollars.
 
 ## Morning path (easy)
 
-1. Open the app.
-2. Pull yesterday from the house inbox, or paste two numbers.
-   - Search: `from:pdqreports@pdqpos.com newer_than:1d`
-   - PDQ EOD today still also lands on mykemueller1@gmail.com.
-   - Drop the official PDQ **Z-report Summary PDF**. Net = Subtotal (ex-tax). Labor = Labor Summary Total. Not Grand Total.
-   - Photos of Z-outs do not parse. Type those two numbers if the PDF has no text.
-3. Tap **Close last night**.
-4. Read three tiles: Labor % · Versus target · Food.
-5. Tap **Send this to [manager]**. One person. No group chat.
-6. Optional: email a copy to the house inbox.
+1. Open the app after **8 AM Central**. Last night auto-fills from `communitypizza2026@gmail.com`.
+   - PDQ EOD lands 6–8 AM. Do not auto-fill during that window.
+   - Net = Subtotal (ex-tax). Labor = Labor Summary Total. Not Grand Total.
+   - If the desk is blank, drop the official PDQ **Z-report Summary PDF**.
+   - Photos of Z-outs do not parse.
+2. Read labor %, versus target, **food cost** (HOLD until a count), and **sales mix**: food · pop · liquor · beer.
+3. Tap **Send this to [manager]**. One person. No group chat.
+4. Optional: email a copy to the house inbox.
 
 If it asks for a schedule photo, it failed.
 
@@ -53,7 +51,8 @@ heavyDollars = laborDollars − targetDollars
 - **heavy > $25** → MOVE. Cut one mid shift before the rush. Keep the peak staffed.
 - **light > $25** → do not add a body from this screen.
 - Else CLEAN. If food evidence is missing, verdict becomes **HOLD**.
-- Food tile stays **HOLD** unless the same-day count box is checked. Never invent food or prime cost.
+- Food **cost** tile stays **HOLD** unless the same-day count box is checked. Never invent food or prime cost.
+- Sales mix is not food cost. Only four buckets: **food, pop, liquor, beer**. Spec Instruction, UKNOWN, Large Pizzas, and negative lines roll into food until mapped.
 
 ## DoorDash (optional, same screen)
 

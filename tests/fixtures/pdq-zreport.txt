@@ -12,6 +12,17 @@ Sales Summary
 Pickup
 23
 $933.76
+Menu Category
+Name QTY Amount
+Spec Instruction 63 ($21.44)
+UKNOWN 92 ($4.00)
+Food 599 $2,213.81
+Pop 47 $67.00
+Liquor 102 $375.25
+Beer 185 $623.50
+Large Pizzas 12 $265.91
+Menu Category Total
+$3,520.03
 Labor Summary
 Job Description
 QTY

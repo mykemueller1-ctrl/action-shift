@@ -16,9 +16,9 @@ Open either door:
 Then:
 
 1. Leave House = Community Tap and manager = Kenzy.
-2. Drop the PDQ Z-report Summary PDF, or paste CTap net + labor. Not Grill. Not Bamba. Photos do not parse.
+2. After 8 AM Central, last night should already be filled from the house inbox. If not, drop the PDQ Z-report PDF. Not Grill. Not Bamba. Photos do not parse.
 3. Hit **Close last night**.
-4. Read the three tiles. Food stays HOLD unless you actually have a count.
+4. Read labor, versus target, food cost (HOLD unless you have a count), and sales mix: food · pop · liquor · beer.
 5. Hit **Send this to Kenzy** and paste the text.
 
 Optional: paste a DoorDash statement. Eligible = Subtotal. Marketing is called out separately.
