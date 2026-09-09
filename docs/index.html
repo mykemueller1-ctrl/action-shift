@@ -508,6 +508,7 @@ void (async function loadCarry() {
       const res = await fetch("last-move.json", { cache: "no-store" });
       if (res.ok) move = Object.assign(emptyMove(), await res.json());
     } catch (e) {}
+    if (hasMove(move)) writeMove(move);
   }
   paintProof(move);
 })();

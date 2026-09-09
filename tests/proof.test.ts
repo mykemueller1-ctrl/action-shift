@@ -103,6 +103,14 @@ test("time-clock filename is proof; void and schedule are not; MOVE cooldown hol
   assert.equal(keepCooldownMove(replyToMove(prior, "not-done"), next).businessDate, "9/9/2026");
 });
 
+test("desk seeds last-move.json into localStorage so cooldown and time-clock attach", () => {
+  const html = readFileSync(join(dirname(fileURLToPath(import.meta.url)), "..", "docs", "index.html"), "utf8");
+  assert.match(html, /fetch\("last-move\.json"/);
+  assert.match(html, /if \(hasMove\(move\)\) writeMove\(move\);/);
+  assert.match(html, /Staff names were not read/);
+  assert.match(html, /prior\.verdict === "MOVE"/);
+});
+
 test("not-done, data-missing, and fix-failed are locked states", () => {
   const move = openMove({
     verdict: "HOLD",
