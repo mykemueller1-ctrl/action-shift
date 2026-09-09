@@ -2,7 +2,8 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { closeNight } from "../lib/close";
 import { mergeCsvFiles, parseToastCsv } from "../lib/csv";
-import { scrapePdqZReport, scrapeTotals } from "../lib/parse";
+import { afterEightChicago, pulledTodayChicago } from "../lib/clock";
+import { scrapePdqMenuMix, scrapePdqZReport, scrapeTotals } from "../lib/parse";
 import { readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -36,6 +37,13 @@ test("Grill lab night: 35.56% and about $189 heavy vs 30%", () => {
   assert.match(result.sendText, /\$1,211\.85 on \$3,408\.15/);
 });
 
+test("auto-fill starts at 8 AM Central, not during the 6–8 EOD window", () => {
+  assert.equal(afterEightChicago(new Date("2026-09-09T12:59:00Z")), false);
+  assert.equal(afterEightChicago(new Date("2026-09-09T13:00:00Z")), true);
+  assert.equal(pulledTodayChicago("2026-09-09T13:05:00-05:00", new Date("2026-09-09T14:00:00Z")), true);
+  assert.equal(pulledTodayChicago("2026-09-08T13:05:00-05:00", new Date("2026-09-09T14:00:00Z")), false);
+});
+
 test("PDQ Z-report uses Subtotal as net and Labor Summary Total, not Grand Total", () => {
   const text = readFileSync(join(fixtures, "pdq-zreport.txt"), "utf8");
   const z = scrapePdqZReport(text);
@@ -57,6 +65,33 @@ test("PDQ Z-report uses Subtotal as net and Labor Summary Total, not Grand Total
   assert.equal(result.verdict, "MOVE");
   assert.equal(result.foodLabel, "Food is MISSING");
   assert.doesNotMatch(result.sendText, /schedule/i);
+});
+
+test("PDQ menu mix is only food, pop, liquor, beer — pizza, spec, unknown, negatives roll into food", () => {
+  const text = readFileSync(join(fixtures, "pdq-zreport.txt"), "utf8");
+  const mix = scrapePdqMenuMix(text);
+  assert.equal(mix?.pop, 67);
+  assert.equal(mix?.liquor, 375.25);
+  assert.equal(mix?.beer, 623.5);
+  assert.equal(mix?.food, 2454.28);
+  assert.deepEqual(
+    mix?.rolledIntoFood.map((line) => line.name),
+    ["Spec Instruction", "UKNOWN", "Large Pizzas"],
+  );
+  assert.equal(mix!.food + mix!.pop + mix!.liquor + mix!.beer, 3520.03);
+  const spaced = [
+    "Menu Category Name QTY Amount",
+    "Spec Instruction 63 ($21.44) UKNOWN 92 ($4.00) Food 599 $2,213.81",
+    "Pop 47 $67.00 Liquor 102 $375.25 Beer 185 $623.50 Large Pizzas 12 $265.91",
+    "Menu Category Total $3,520.03",
+  ].join(" ");
+  const fromPdfSpaces = scrapePdqMenuMix(spaced);
+  assert.equal(fromPdfSpaces?.food, 2454.28);
+  assert.equal(fromPdfSpaces?.beer, 623.5);
+  const dirtyHeader = scrapePdqMenuMix(
+    "Menu Category Category Name QTY Total Spec Instruction 63 ($21.44) Food 599 $2,213.81 Menu Category Total $2,192.37",
+  );
+  assert.equal(dirtyHeader?.rolledIntoFood[0]?.name, "Spec Instruction");
 });
 
 test("Toast CSVs fill net + labor and still skip food", () => {
