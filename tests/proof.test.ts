@@ -9,7 +9,9 @@ import {
   attachProof,
   emptyLastMove,
   isForbiddenProof,
+  keepCooldownMove,
   openMove,
+  proofKindFromFilename,
   replyToMove,
   shouldCarryForward,
   verifyMove,
@@ -81,6 +83,24 @@ test("committed last-move.json has no live CTap dollars", () => {
   assert.doesNotMatch(json, /3463|1324|3408|1211/);
   assert.match(json, /"evidenceStatus": "acknowledged"/);
   assert.doesNotMatch(json, /"verified"/);
+});
+
+test("time-clock filename is proof; void and schedule are not; MOVE cooldown holds", () => {
+  assert.equal(proofKindFromFilename("5-31-2026_to_6-13-2026_Historical_Time_Clock_Report_Community_Pizza.PDF"), "time-clock export");
+  assert.equal(proofKindFromFilename("6-8-2026 Void_Promo_Report Community Pizza.pdf"), "");
+  assert.equal(isForbiddenProof("schedule photo of who works 5-7"), true);
+  const prior = openMove({
+    businessDate: "9/8/2026",
+    verdict: "MOVE",
+    action: "Cut one mid shift before the rush. Keep the peak staffed.",
+  });
+  const next = openMove({
+    businessDate: "9/9/2026",
+    verdict: "MOVE",
+    action: "A second cut would stack.",
+  });
+  assert.equal(keepCooldownMove(prior, next).businessDate, "9/8/2026");
+  assert.equal(keepCooldownMove(replyToMove(prior, "not-done"), next).businessDate, "9/9/2026");
 });
 
 test("not-done, data-missing, and fix-failed are locked states", () => {
