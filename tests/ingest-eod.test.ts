@@ -4,7 +4,7 @@ import { spawnSync } from "node:child_process";
 import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { hasHouseGmailEnv, isForbiddenName, runMorningIngest } from "../scripts/eod-lib.mjs";
+import { hasHouseGmailEnv, isForbiddenName, isHouseInbox, runMorningIngest } from "../scripts/eod-lib.mjs";
 
 const fixture = readFileSync(join("tests", "fixtures", "pdq-zreport.txt"), "utf8");
 
@@ -34,7 +34,18 @@ test("ingest-eod writes Subtotal + Labor Summary Total and HOLDs food", () => {
 
 test("Void_Promo is forbidden and house Gmail env is off in git", () => {
   assert.equal(isForbiddenName("9-8-2026 Void_Promo_Report Community Pizza.pdf"), true);
+  assert.equal(isHouseInbox("communitypizza2026@gmail.com"), true);
+  assert.equal(isHouseInbox("mykemueller1@gmail.com"), false);
   assert.equal(hasHouseGmailEnv({}), false);
+  assert.equal(
+    hasHouseGmailEnv({
+      GMAIL_CLIENT_ID: "x",
+      GMAIL_CLIENT_SECRET: "x",
+      GMAIL_REFRESH_TOKEN: "x",
+      GMAIL_USER_EMAIL: "mykemueller1@gmail.com",
+    }),
+    false,
+  );
   const close = runMorningIngest([
     { filename: "9-8-2026 Void_Promo_Report Community Pizza.pdf", text: fixture },
   ]);

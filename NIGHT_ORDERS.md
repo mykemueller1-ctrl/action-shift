@@ -9,7 +9,7 @@ Myke is beat. Do not text. Kenzy already has the labor note. Do not send again.
 - Pull last night still reads last-close.json, then the function if present.
 
 ## Ask SuperGrok
-House Gmail env on Netlify — yes or no? If no, keep `npm run ingest` after 6 AM. What proof kind tomorrow for the mid cut?
+House inbox is communitypizza2026@gmail.com. Locked. Are the three GMAIL_* secrets on Netlify right now — yes or no? What proof kind tomorrow for the mid cut?
 
 ## Do not
 never86. Vercel. Copilot. Auto-text Kenzy. Job B. Invent food.

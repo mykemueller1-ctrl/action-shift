@@ -9,8 +9,20 @@ export const HOUSE = {
   gmailQuery: "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
 };
 
+export function houseInboxOf(env = process.env) {
+  return String(env.GMAIL_HOUSE_INBOX || env.GMAIL_USER_EMAIL || HOUSE.houseInbox)
+    .trim()
+    .toLowerCase();
+}
+
+export function isHouseInbox(email) {
+  return String(email || "").trim().toLowerCase() === HOUSE.houseInbox;
+}
+
+/** Ingest is the house box only. Never mykemueller1 as Kenzy's product login. */
 export function hasHouseGmailEnv(env = process.env) {
-  return Boolean(env.GMAIL_CLIENT_ID && env.GMAIL_CLIENT_SECRET && env.GMAIL_REFRESH_TOKEN);
+  if (!(env.GMAIL_CLIENT_ID && env.GMAIL_CLIENT_SECRET && env.GMAIL_REFRESH_TOKEN)) return false;
+  return isHouseInbox(houseInboxOf(env));
 }
 
 export function isForbiddenName(filename = "") {
@@ -88,6 +100,9 @@ export function runMorningIngest(files, prior = null, now = new Date()) {
 }
 
 export async function gmailAccessToken(env = process.env) {
+  if (!isHouseInbox(houseInboxOf(env))) {
+    return { error: "House inbox is communitypizza2026@gmail.com only. Type the two numbers." };
+  }
   if (!hasHouseGmailEnv(env)) return { error: NO_GMAIL };
   const res = await fetch("https://oauth2.googleapis.com/token", {
     method: "POST",
