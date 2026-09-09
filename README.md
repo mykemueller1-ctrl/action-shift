@@ -1,33 +1,34 @@
 # Action Shift
 
-Owner seat. Drop last night. Get one number. Send one text.
+Owner seat for Community Tap. Drop last night. Get one number. Send one text to Kenzy.
 
-This is not the Never86 OS. This is not Taco Bamba. This is not scheduling software.
+This is the OS loop, not the 133-table platform.
 
-## What it does
+## Morning test
 
-1. Owner drops sales + labor for one store, one day — paste, type, or Toast CSV (Sales Summary + Labor Breakdown).
-2. Desk shows labor dollars, net sales, percent, and the formula.
-3. One move, or HOLD.
-4. One text to one manager.
-5. Food cost stays off the board until invoices and a count exist.
+Open either door:
 
-## Stack
+- https://action-shift.netlify.app
+- https://cdn.jsdelivr.net/gh/mykemueller1-ctrl/action-shift@main/docs/index.html
 
-- Next.js 15 App Router + React 19 + TypeScript
-- Zod for the close contract
-- Cloudflare Workers via OpenNext when you deploy
-- No database on day one. House book is in memory for the session.
+Then:
 
-## Run
+1. Leave House = Community Tap and manager = Kenzy.
+2. Paste CTap net sales + labor dollars from PDQ. Not Grill. Not Bamba.
+3. Hit **Close last night**.
+4. Read the three tiles. Food stays HOLD unless you actually have a count.
+5. Hit **Send this to Kenzy** and paste the text.
 
-```bash
-npm install
-npm run dev
-```
+Optional: paste a DoorDash statement. Eligible = Subtotal. Marketing is called out separately.
 
-Open http://localhost:3000
+Photos of Z-outs do not parse in this desk. Type or paste the two numbers.
+
+## Stack tonight
+
+- Static HTML in `docs/` (the product)
+- Netlify publish = docs (not Vercel)
+- Next.js files in this repo are leftover scaffolding. Do not deploy them tonight.
 
 ## Do not add
 
-Schedule photos. Who is on 5–7. Inventory counts. Eleven agents. HubSpot. Command Center.
+Schedule photos. Who is on 5-7. Inventory counts. Eleven agents. HubSpot. Command Center. PINs. Bamba dollars on this seat.

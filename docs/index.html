@@ -3,51 +3,74 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Action Shift</title>
+  <title>Action Shift · Community Tap</title>
   <style>
-    :root { --paper:#f4efe6; --ink:#1a1714; --mute:#6b645b; --rule:#d9d0c3; --move:#8b1e1e; --hold:#8a6a12; }
+    :root { --paper:#f4efe6; --ink:#1a1714; --mute:#6b645b; --rule:#d9d0c3; --move:#8b1e1e; --hold:#8a6a12; --ok:#2c5a3c; }
     * { box-sizing: border-box; }
     body { margin:0; background:var(--paper); color:var(--ink); font-family:Georgia,serif; }
-    main { max-width:720px; margin:0 auto; padding:2.5rem 1.25rem 4rem; }
+    main { max-width:760px; margin:0 auto; padding:2.25rem 1.15rem 5rem; }
     h1 { font-size:42px; font-style:italic; font-weight:500; margin:0 0 .4rem; }
     .eyebrow { letter-spacing:.16em; font-size:11px; text-transform:uppercase; }
-    .mute { color:var(--mute); max-width:520px; }
-    label { display:block; margin-top:12px; }
+    .mute { color:var(--mute); max-width:560px; line-height:1.45; }
+    label { display:block; margin-top:12px; font-size:15px; }
     input, textarea, button { font:inherit; }
     input, textarea { display:block; width:100%; margin-top:6px; padding:10px 12px; border:1px solid var(--rule); background:#fff; }
     button { margin-top:8px; margin-right:8px; padding:12px 16px; background:var(--ink); color:var(--paper); border:0; cursor:pointer; }
-    pre { white-space:pre-wrap; background:#fff; padding:16px; margin-top:20px; border:1px solid var(--rule); }
+    button.ghost { background:transparent; color:var(--ink); border:1px solid var(--rule); }
+    .drop { margin-top:16px; padding:16px; border:1px dashed var(--rule); background:#fff; }
+    .tiles { display:grid; grid-template-columns:1fr; gap:10px; margin:20px 0; }
+    @media (min-width:640px) { .tiles { grid-template-columns:1fr 1fr 1fr; } }
+    .tile { background:#fff; border:1px solid var(--rule); padding:14px 14px 12px; min-height:108px; }
+    .tile b { display:block; font-size:26px; margin:6px 0 2px; }
+    .tile.MOVE { border-color:var(--move); }
+    .tile.HOLD { border-color:var(--hold); }
+    .tile.CLEAN { border-color:var(--ok); }
+    pre { white-space:pre-wrap; background:#fff; padding:16px; margin-top:16px; border:1px solid var(--rule); }
     .hold { color:var(--hold); }
-    .err { color:var(--move); }
-    #out { margin-top:36px; border-top:1px solid var(--rule); padding-top:24px; display:none; }
+    .err { color:var(--move); min-height:1.2em; }
+    #out { margin-top:28px; border-top:1px solid var(--rule); padding-top:22px; display:none; }
+    .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   </style>
 </head>
 <body>
 <main>
-  <p class="eyebrow">Action Shift · Never 86'd</p>
+  <p class="eyebrow">Never 86'd · Action Shift · Owner seat</p>
   <h1>Last night.</h1>
-  <p class="mute">This house is Community Tap. Kenzy runs it. Lab dollars from another house stay labeled lab. I will not invent food cost. I will not ask for a schedule photo.</p>
+  <p class="mute">Community Tap is the house. Kenzy is the manager on this seat. Paste PDQ numbers or a DoorDash statement. One close. One move or HOLD. Food stays HOLD until a same-day count exists.</p>
 
-  <label>House <input id="store" value="Community Tap" /></label>
-  <label>Business date <input id="date" placeholder="last night" /></label>
-  <label>Net sales <input id="net" placeholder="paste CTap net" /></label>
-  <label>Labor dollars <input id="labor" placeholder="paste CTap labor" /></label>
-  <label>House labor target % <input id="target" value="30" /></label>
-  <label>One manager <input id="mgr" value="Kenzy" /></label>
-  <label>Or paste a Toast line
-    <textarea id="paste" rows="4" placeholder="Net $0.00  Labor $0.00"></textarea>
+  <div class="row">
+    <label>House <input id="store" value="Community Tap" /></label>
+    <label>One manager <input id="mgr" value="Kenzy" /></label>
+  </div>
+  <div class="row">
+    <label>Business date <input id="date" placeholder="last night" /></label>
+    <label>House labor target % <input id="target" value="28" /></label>
+  </div>
+  <div class="row">
+    <label>Net sales <input id="net" inputmode="decimal" placeholder="CTap net from PDQ" /></label>
+    <label>Labor dollars <input id="labor" inputmode="decimal" placeholder="CTap labor from PDQ" /></label>
+  </div>
+  <label>Paste PDQ / Z-out / any sales+labor line
+    <textarea id="paste" rows="4" placeholder="Net $0.00\nLabor $0.00"></textarea>
   </label>
+  <label>Paste DoorDash statement (optional)
+    <textarea id="dash" rows="5" placeholder="Subtotal $0.00\nCommission $0.00\nMarketing $0.00\nNet total $0.00"></textarea>
+  </label>
+  <label class="mute" style="margin-top:14px"><input id="food" type="checkbox" style="display:inline;width:auto" /> I have same-day invoices AND a count</label>
+  <div class="drop" id="drop">Drop a .txt or .csv here, or <input id="file" type="file" accept=".txt,.csv,.tsv,.md" /></div>
   <p class="mute" id="preview"></p>
-  <button id="load">Load lab fixture (not CTap)</button>
   <button id="close">Close last night</button>
+  <button class="ghost" id="example">Load CTap DoorDash example (Jan 2026, not last night)</button>
   <p class="err" id="err"></p>
 
   <section id="out">
     <p class="eyebrow" id="verdict"></p>
-    <p style="font-size:32px;margin:8px 0" id="pct"></p>
-    <p id="formula"></p>
-    <p id="move"></p>
-    <p class="hold" id="hold"></p>
+    <div class="tiles">
+      <div class="tile" id="t1"><span class="eyebrow">Labor</span><b id="pct"></b><span id="formula"></span></div>
+      <div class="tile" id="t2"><span class="eyebrow">Versus target</span><b id="heavy"></b><span id="move"></span></div>
+      <div class="tile HOLD" id="t3"><span class="eyebrow">Food</span><b id="foodv">HOLD</b><span id="hold"></span></div>
+    </div>
+    <div id="dashout" class="mute"></div>
     <pre id="text"></pre>
     <button id="send">Send this to Kenzy</button>
   </section>
@@ -56,80 +79,153 @@
 function money(n) {
   return n.toLocaleString("en-US", { style: "currency", currency: "USD" });
 }
-function scrape(text) {
-  const labeledNet = text.match(/net[^0-9$]{0,16}\$?([0-9,]+(?:\.[0-9]{1,2})?)/i);
-  const labeledLabor = text.match(/labor[^0-9$]{0,16}\$?([0-9,]+(?:\.[0-9]{1,2})?)/i);
-  const moneyBits = [...text.matchAll(/\$?([0-9]{1,3}(?:,[0-9]{3})+(?:\.[0-9]{1,2})?|[0-9]+\.[0-9]{2})/g)].map(m => Number(m[1].replace(/,/g, "")));
-  const netSales = labeledNet ? Number(labeledNet[1].replace(/,/g, "")) : moneyBits[0];
-  const laborDollars = labeledLabor ? Number(labeledLabor[1].replace(/,/g, "")) : moneyBits[1];
+function num(v) {
+  const n = Number(String(v ?? "").replace(/[^0-9.-]/g, ""));
+  return Number.isFinite(n) ? n : undefined;
+}
+function grab(text, labels) {
+  for (const label of labels) {
+    const re = new RegExp(label + "[^0-9$]{0,28}\\$?([0-9,]+(?:\\.[0-9]{1,2})?)", "i");
+    const m = text.match(re);
+    if (m) return Number(m[1].replace(/,/g, ""));
+  }
+}
+function scrapeLabor(text) {
+  const netSales = grab(text, ["net sales", "net", "total sales", "sales"]);
+  const laborDollars = grab(text, ["labor dollars", "labor cost", "labor", "payroll"]);
+  const moneyBits = [...text.matchAll(/\\$?([0-9]{1,3}(?:,[0-9]{3})+(?:\\.[0-9]{1,2})?|[0-9]+\\.[0-9]{2})/g)].map(m => Number(m[1].replace(/,/g, "")));
   return {
-    netSales: Number.isFinite(netSales) ? netSales : undefined,
-    laborDollars: Number.isFinite(laborDollars) ? laborDollars : undefined,
+    netSales: netSales ?? moneyBits[0],
+    laborDollars: laborDollars ?? moneyBits[1],
   };
+}
+function scrapeDash(text) {
+  if (!text || !text.trim()) return null;
+  const eligible = grab(text, ["eligible sales", "subtotal", "store sales"]);
+  const commission = grab(text, ["commission"]) || 0;
+  const merchant = grab(text, ["merchant processing", "merchant fee", "merchant"]) || 0;
+  const marketing = grab(text, ["marketing", "ads", "promotions", "dashpass"]) || 0;
+  const errors = grab(text, ["error charges", "error charge", "adjustments"]) || 0;
+  const payout = grab(text, ["net total", "net payout", "payout"]);
+  if (!(eligible > 0)) return { note: "DoorDash paste needs a Subtotal / eligible sales line." };
+  const documented = commission + merchant + marketing + errors;
+  const observedPct = (documented / eligible) * 100;
+  const expectedPayout = eligible - documented;
+  const variance = payout != null ? payout - expectedPayout : null;
+  let flag = "3P take on eligible sales is " + observedPct.toFixed(2) + "%.";
+  if (marketing > 0) flag += " Marketing/ads " + money(marketing) + " is a choice, not a fee you cannot see.";
+  if (observedPct > 30) flag += " HOLD a rate-gap fight until the contract page is in the same file.";
+  return { eligible, documented, observedPct, payout, variance, marketing, flag };
 }
 function closeNight(raw) {
   const laborPct = (raw.laborDollars / raw.netSales) * 100;
   const targetDollars = raw.netSales * (raw.laborTargetPct / 100);
   const heavyDollars = raw.laborDollars - targetDollars;
-  const date = raw.businessDate || null;
+  const date = raw.businessDate || "last night";
   let verdict = "CLEAN";
   let move = "Labor is inside the house target. Keep the same plan tomorrow. Do not invent a cut.";
   if (heavyDollars > 25) {
     verdict = "MOVE";
-    move = "Labor is " + money(heavyDollars) + " heavy vs a " + raw.laborTargetPct.toFixed(0) + "% floor. Cut one mid shift before the rush. Keep the peak window staffed.";
+    move = "Labor is " + money(heavyDollars) + " heavy vs a " + raw.laborTargetPct.toFixed(0) + "% floor. Cut one mid shift before the rush. Keep the peak staffed.";
+  } else if (heavyDollars < -25) {
+    move = "Labor is " + money(Math.abs(heavyDollars)) + " light vs target. Do not add a body from this screen.";
   }
-  const hold = "HOLD food cost. No same-scope invoices and count. Invoice day is not daily prime.";
-  if (verdict === "CLEAN") verdict = "HOLD";
-  const sendText = [
-    "Labor " + (date || "last night") + ": " + money(raw.laborDollars) + " on " + money(raw.netSales) + " net = " + laborPct.toFixed(2) + "%.",
-    "Target here is " + raw.laborTargetPct.toFixed(0) + "%.",
-    "Move: " + move,
-    hold,
-    "Reply with done or the reason it did not happen."
-  ].join("\n");
-  return { laborPct, heavyDollars, verdict, move, hold, sendText, formula: money(raw.laborDollars) + " \u00f7 " + money(raw.netSales) + " = " + laborPct.toFixed(2) + "%" };
+  const hold = raw.hasFoodEvidence
+    ? "Food evidence is flagged. Still do not blend a different day's invoices into tonight."
+    : "HOLD food cost. No same-day invoices and count. Invoice day is not daily prime.";
+  if (!raw.hasFoodEvidence && verdict === "CLEAN") verdict = "HOLD";
+  return {
+    laborPct, heavyDollars, verdict, move, hold,
+    formula: money(raw.laborDollars) + " \u00f7 " + money(raw.netSales) + " = " + laborPct.toFixed(2) + "%",
+    heavyLine: (heavyDollars >= 0 ? money(heavyDollars) + " heavy" : money(Math.abs(heavyDollars)) + " light") + " vs " + raw.laborTargetPct.toFixed(0) + "%",
+    sendCore: [
+      "Labor " + date + ": " + money(raw.laborDollars) + " on " + money(raw.netSales) + " net = " + laborPct.toFixed(2) + "%.",
+      "Target here is " + raw.laborTargetPct.toFixed(0) + "%.",
+      "Move: " + move,
+      hold,
+      "Reply with done or the reason it did not happen."
+    ].join("\n")
+  };
 }
 const $ = (id) => document.getElementById(id);
-$("paste").addEventListener("input", () => {
-  const p = scrape($("paste").value);
-  $("preview").textContent = p.netSales ? ("Read from paste: net " + p.netSales + " \u00b7 labor " + (p.laborDollars ?? "\u2014")) : "";
+function preview() {
+  const p = scrapeLabor($("paste").value);
+  const d = scrapeDash($("dash").value);
+  const bits = [];
+  if (p.netSales) bits.push("PDQ read net " + money(p.netSales) + (p.laborDollars != null ? " · labor " + money(p.laborDollars) : ""));
+  if (d && d.eligible) bits.push("DoorDash eligible " + money(d.eligible) + " · documented " + money(d.documented) + " · " + d.observedPct.toFixed(2) + "%");
+  if (d && d.note) bits.push(d.note);
+  $("preview").textContent = bits.join("  |  ");
+}
+$("paste").addEventListener("input", preview);
+$("dash").addEventListener("input", preview);
+function eatText(text) {
+  if (/subtotal|doordash|commission|dashpass/i.test(text) && !$("dash").value.trim()) $("dash").value = text;
+  else $("paste").value = text;
+  preview();
+}
+$("file").addEventListener("change", async (e) => {
+  const f = e.target.files && e.target.files[0];
+  if (!f) return;
+  eatText(await f.text());
 });
-$("load").onclick = () => {
-  $("store").value = "Lab fixture — not Community Tap";
-  $("date").value = "lab";
-  $("net").value = "3408.15";
-  $("labor").value = "1211.85";
-  $("target").value = "30";
-  $("mgr").value = "the manager";
-  $("paste").value = "LAB Net $3,408.15 Labor $1,211.85 — not CTap";
-  $("preview").textContent = "Lab fixture only. Not Community Tap. Not Kenzy's night.";
+$("drop").addEventListener("dragover", (e) => e.preventDefault());
+$("drop").addEventListener("drop", async (e) => {
+  e.preventDefault();
+  const f = e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f) eatText(await f.text());
+});
+$("example").onclick = () => {
+  $("store").value = "Community Tap";
+  $("mgr").value = "Kenzy";
+  $("date").value = "Jan 2026 DoorDash example";
+  $("dash").value = "Community Tap DoorDash Jan 2026 example\nSubtotal $8,207.63\nCommission $1,764.27\nMarketing $830.38\nNet total $7,646.86\nEligible = Subtotal. Tips and customer fees do not count.";
+  $("preview").textContent = "Example only. Not last night. Paste real PDQ labor to close the night.";
 };
 $("close").onclick = () => {
   $("err").textContent = "";
-  const p = scrape($("paste").value);
+  const p = scrapeLabor($("paste").value);
   const net = Number($("net").value || p.netSales);
   const labor = Number($("labor").value || p.laborDollars);
-  const target = Number($("target").value || 30);
+  const target = Number($("target").value || 28);
   if (!(net > 0) || !(labor >= 0)) {
     $("out").style.display = "none";
-    $("err").textContent = "Need net sales and labor dollars for one store, one day.";
+    $("err").textContent = "Need CTap net sales and labor dollars for one day. Photos do not parse. Type or paste the two numbers.";
     return;
   }
-  const r = closeNight({ netSales: net, laborDollars: labor, laborTargetPct: target, businessDate: $("date").value });
+  const r = closeNight({
+    netSales: net,
+    laborDollars: labor,
+    laborTargetPct: target,
+    businessDate: $("date").value,
+    hasFoodEvidence: $("food").checked
+  });
+  const dash = scrapeDash($("dash").value);
   const mgr = $("mgr").value || "the manager";
-  const house = $("store").value || "this house";
-  const body = "Hey " + mgr + " \u2014\n" + house + "\n" + r.sendText;
+  const house = $("store").value || "Community Tap";
+  let body = "Hey " + mgr + " \u2014\n" + house + "\n" + r.sendCore;
+  if (dash && dash.eligible) {
+    body += "\n3P: eligible " + money(dash.eligible) + ", documented " + money(dash.documented) + " (" + dash.observedPct.toFixed(2) + "% take). " + dash.flag;
+    $("dashout").textContent = dash.flag + (dash.variance != null ? " Payout variance vs documented take: " + money(dash.variance) + "." : "");
+  } else {
+    $("dashout").textContent = dash && dash.note ? dash.note : "";
+  }
   $("verdict").textContent = r.verdict;
   $("pct").textContent = r.laborPct.toFixed(2) + "%";
   $("formula").textContent = r.formula;
+  $("heavy").textContent = r.heavyLine;
   $("move").textContent = r.move;
   $("hold").textContent = r.hold;
+  $("foodv").textContent = $("food").checked ? "COUNTED" : "HOLD";
+  $("t1").className = "tile " + r.verdict;
+  $("t2").className = "tile " + r.verdict;
+  $("t3").className = "tile " + ($("food").checked ? "CLEAN" : "HOLD");
   $("text").textContent = body;
   $("send").textContent = "Send this to " + mgr;
   $("out").style.display = "block";
   $("send").onclick = async () => {
     await navigator.clipboard.writeText(body);
-    $("send").textContent = "Copied";
+    $("send").textContent = "Copied — paste to " + mgr;
   };
 };
 </script>
