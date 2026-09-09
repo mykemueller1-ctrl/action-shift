@@ -6,7 +6,7 @@ import { mergeCsvFiles } from "@/lib/csv";
 import { scrapeTotals } from "@/lib/parse";
 
 export default function Page() {
-  const [store, setStore] = useState("This house");
+  const [store, setStore] = useState("Community Tap");
   const [businessDate, setBusinessDate] = useState("");
   const [netSales, setNetSales] = useState("");
   const [laborDollars, setLaborDollars] = useState("");
@@ -77,19 +77,19 @@ export default function Page() {
 
   async function copySend() {
     if (!result) return;
-    const body = `Hey ${managerName} —\n${result.sendText}`;
+    const body = `Hey ${managerName} —\n${store}\n${result.sendText}`;
     await navigator.clipboard.writeText(body);
     setCopied(true);
   }
 
   return (
     <main style={{ maxWidth: 720, margin: "0 auto", padding: "2.5rem 1.25rem 4rem" }}>
-      <p style={{ letterSpacing: ".16em", fontSize: 11, textTransform: "uppercase" }}>Action Shift</p>
+      <p style={{ letterSpacing: ".16em", fontSize: 11, textTransform: "uppercase" }}>Action Shift · Never 86'd</p>
       <h1 style={{ fontSize: 42, fontStyle: "italic", fontWeight: 500, margin: "0 0 .4rem" }}>
         Last night.
       </h1>
       <p style={{ color: "var(--mute)", maxWidth: 520 }}>
-        Drop two numbers. I will not ask for a schedule photo. I will not invent food cost.
+        Community Tap. Kenzy runs it. Paste CTap net and labor. I will not ask for a schedule photo. I will not invent food cost. I will not copy another house into this seat.
       </p>
 
       <section style={{ marginTop: 28, display: "grid", gap: 12 }}>
@@ -99,15 +99,15 @@ export default function Page() {
         </label>
         <label>
           Business date
-          <input value={businessDate} onChange={(e) => setBusinessDate(e.target.value)} placeholder="2026-08-31" style={field} />
+          <input value={businessDate} onChange={(e) => setBusinessDate(e.target.value)} placeholder="last night" style={field} />
         </label>
         <label>
           Net sales
-          <input value={netSales} onChange={(e) => setNetSales(e.target.value)} placeholder="3408.15" style={field} />
+          <input value={netSales} onChange={(e) => setNetSales(e.target.value)} placeholder="CTap net" style={field} />
         </label>
         <label>
           Labor dollars
-          <input value={laborDollars} onChange={(e) => setLaborDollars(e.target.value)} placeholder="1211.85" style={field} />
+          <input value={laborDollars} onChange={(e) => setLaborDollars(e.target.value)} placeholder="CTap labor" style={field} />
         </label>
         <label>
           House labor target %
@@ -123,7 +123,7 @@ export default function Page() {
             value={paste}
             onChange={(e) => setPaste(e.target.value)}
             rows={4}
-            placeholder="Net $3,408.15  Labor $1,211.85"
+            placeholder="Net $0.00  Labor $0.00"
             style={{ ...field, minHeight: 90 }}
           />
         </label>
@@ -138,7 +138,7 @@ export default function Page() {
           />
         </label>
         <p style={{ fontSize: 12, color: "var(--mute)", margin: 0 }}>
-          Labor Breakdown + Sales Summary only. No schedule photo. No food invent.
+          Labor Breakdown + Sales Summary only. No schedule photo. No food invent. No stranger-house dollars.
         </p>
         {preview.netSales ? (
           <p style={{ fontSize: 13, color: "var(--mute)" }}>
@@ -163,7 +163,7 @@ export default function Page() {
           <p style={{ marginTop: 16 }}>{result.move}</p>
           <p style={{ color: "var(--hold)" }}>{result.hold}</p>
           <pre style={{ whiteSpace: "pre-wrap", background: "#fff", padding: 16, marginTop: 20, border: "1px solid var(--rule)" }}>
-            {`Hey ${managerName} —\n${result.sendText}`}
+            {`Hey ${managerName} —\n${store}\n${result.sendText}`}
           </pre>
           <button onClick={() => void copySend()} style={btn}>
             {copied ? "Copied" : `Send this to ${managerName}`}
