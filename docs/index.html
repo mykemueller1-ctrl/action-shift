@@ -40,7 +40,7 @@
   <h1>Last night.</h1>
   <p class="mute">Community Tap is the house. Kenzy is the manager on this seat. Daily inbox is communitypizza2026@gmail.com. House pack is already set. Type two numbers. Close. Send. Food stays HOLD until a same-day count exists.</p>
   <ol class="mute steps">
-    <li>Type last night's net and labor, or drop a file.</li>
+    <li>Type last night's net and labor, or drop the PDQ Z-report PDF.</li>
     <li>Tap <b>Close last night</b>.</li>
     <li>Tap <b>Send this to Kenzy</b>. If it asks for a schedule, it failed.</li>
   </ol>
@@ -65,7 +65,8 @@
     <textarea id="dash" rows="5" placeholder="Subtotal $0.00\nCommission $0.00\nMarketing $0.00\nNet total $0.00"></textarea>
   </label>
   <label class="mute" style="margin-top:14px"><input id="food" type="checkbox" style="display:inline;width:auto" /> I have same-day invoices AND a count</label>
-  <div class="drop" id="drop">Drop a .txt or .csv here, or <input id="file" type="file" accept=".txt,.csv,.tsv,.md" /></div>
+  <div class="drop" id="drop">Drop the PDQ Z-report PDF, a .txt, or a .csv, or <input id="file" type="file" accept=".pdf,.txt,.csv,.tsv,.md" /></div>
+  <input type="hidden" id="fileSource" value="" />
   <p class="mute" id="preview"></p>
   <button id="close">Close last night</button>
   <button class="ghost" id="example">Load CTap DoorDash example (Jan 2026, not last night)</button>
@@ -84,7 +85,9 @@
     <button class="ghost" id="mailinbox">Email a copy to the house inbox</button>
   </section>
 </main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 function money(n) {
   return n.toLocaleString("en-US", { style: "currency", currency: "USD" });
 }
@@ -99,7 +102,20 @@ function grab(text, labels) {
     if (m) return Number(m[1].replace(/,/g, ""));
   }
 }
+function scrapePdqZ(text) {
+  if (!/z report|end of day/i.test(text) || !/labor summary/i.test(text)) return null;
+  const sub = text.match(/subtotal:\s*\$?\s*([0-9,]+(?:\.[0-9]{2}))/i);
+  const laborSection = (text.split(/labor summary/i)[1] || "").split(/discount summary/i)[0];
+  const lab = laborSection.match(/total:\s*[\d,]+\s*\$?\s*([0-9,]+(?:\.[0-9]{2}))/i);
+  const date = text.match(/business date:\s*([0-9]{1,2}\/[0-9]{1,2}\/[0-9]{4})/i);
+  const netSales = sub ? Number(sub[1].replace(/,/g, "")) : undefined;
+  const laborDollars = lab ? Number(lab[1].replace(/,/g, "")) : undefined;
+  if (!(netSales > 0) && !(laborDollars >= 0)) return null;
+  return { netSales, laborDollars, businessDate: date && date[1], source: "PDQ Z-report PDF" };
+}
 function scrapeLabor(text) {
+  const z = scrapePdqZ(text);
+  if (z && z.netSales > 0 && z.laborDollars != null) return z;
   const netSales = grab(text, ["net sales", "net", "total sales", "sales"]);
   const laborDollars = grab(text, ["labor dollars", "labor cost", "labor", "payroll"]);
   const moneyBits = [...text.matchAll(/\\$?([0-9]{1,3}(?:,[0-9]{3})+(?:\\.[0-9]{1,2})?|[0-9]+\\.[0-9]{2})/g)].map(m => Number(m[1].replace(/,/g, "")));
@@ -107,6 +123,16 @@ function scrapeLabor(text) {
     netSales: netSales ?? moneyBits[0],
     laborDollars: laborDollars ?? moneyBits[1],
   };
+}
+async function pdfToText(buf) {
+  const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
+  const pages = [];
+  for (let i = 1; i <= pdf.numPages; i++) {
+    const page = await pdf.getPage(i);
+    const content = await page.getTextContent();
+    pages.push(content.items.map((it) => it.str).join(" "));
+  }
+  return pages.join("\n");
 }
 function scrapeDash(text) {
   if (!text || !text.trim()) return null;
@@ -168,21 +194,66 @@ function preview() {
 }
 $("paste").addEventListener("input", preview);
 $("dash").addEventListener("input", preview);
-function eatText(text) {
-  if (/subtotal|doordash|commission|dashpass/i.test(text) && !$("dash").value.trim()) $("dash").value = text;
+function eatText(text, source) {
+  const z = scrapePdqZ(text);
+  if (z && z.netSales > 0 && z.laborDollars != null) {
+    $("paste").value = "PDQ Z-report\nSubtotal (net) $" + z.netSales.toFixed(2) + "\nLabor Summary $" + z.laborDollars.toFixed(2);
+    $("net").value = String(z.netSales);
+    $("labor").value = String(z.laborDollars);
+    if (z.businessDate && !$("date").value) $("date").value = z.businessDate;
+    $("fileSource").value = source || z.source;
+    preview();
+    $("preview").textContent = "PDQ Z-report: net " + money(z.netSales) + " (Subtotal, not Grand Total) · labor " + money(z.laborDollars);
+    $("err").textContent = "";
+    return;
+  }
+  if (/subtotal|doordash|commission|dashpass/i.test(text) && !/z report|labor summary/i.test(text) && !$("dash").value.trim()) $("dash").value = text;
   else $("paste").value = text;
+  $("fileSource").value = source || "";
   preview();
+}
+async function eatFile(f) {
+  if (!f) return;
+  const name = f.name || "";
+  const type = f.type || "";
+  if (/\.(png|jpe?g|gif|webp|heic|heif)$/i.test(name) || type.startsWith("image/")) {
+    $("err").textContent = "Photos of Z-outs do not parse. Drop the PDQ Z-report PDF or type the two numbers.";
+    return;
+  }
+  if (/\.pdf$/i.test(name) || type === "application/pdf") {
+    $("preview").textContent = "Reading PDQ PDF…";
+    $("err").textContent = "";
+    try {
+      const text = await pdfToText(await f.arrayBuffer());
+      if (!text.trim()) {
+        $("err").textContent = "This PDF has no text layer. Type net and labor from the Z-report.";
+        $("preview").textContent = "";
+        return;
+      }
+      if (!/labor summary/i.test(text) && /z report|hourly|void/i.test(text + name)) {
+        $("paste").value = text;
+        preview();
+        $("err").textContent = "Need the Z-report Summary PDF (Labor Summary + Subtotal). Hourly and void PDFs do not close the night.";
+        return;
+      }
+      eatText(text, "PDQ Z-report PDF");
+    } catch (e) {
+      $("err").textContent = "Could not read that PDF. Type the two numbers from the Z-report.";
+      $("preview").textContent = "";
+    }
+    return;
+  }
+  eatText(await f.text(), name);
 }
 $("file").addEventListener("change", async (e) => {
   const f = e.target.files && e.target.files[0];
-  if (!f) return;
-  eatText(await f.text());
+  if (f) eatFile(f);
 });
 $("drop").addEventListener("dragover", (e) => e.preventDefault());
 $("drop").addEventListener("drop", async (e) => {
   e.preventDefault();
   const f = e.dataTransfer.files && e.dataTransfer.files[0];
-  if (f) eatText(await f.text());
+  if (f) eatFile(f);
 });
 $("example").onclick = () => {
   $("store").value = "Community Tap";
@@ -199,7 +270,7 @@ $("close").onclick = () => {
   const target = Number($("target").value || 28);
   if (!(net > 0) || !(labor >= 0)) {
     $("out").style.display = "none";
-    $("err").textContent = "Need CTap net sales and labor dollars for one day. Photos do not parse. Type or paste the two numbers.";
+    $("err").textContent = "Need CTap net sales and labor dollars for one day. Drop the PDQ Z-report PDF, or type the two numbers. Photos do not parse.";
     return;
   }
   const r = closeNight({
@@ -213,7 +284,11 @@ $("close").onclick = () => {
   const mgr = $("mgr").value || "the manager";
   const house = $("store").value || "Community Tap";
   const inbox = ($("inbox").value || "communitypizza2026@gmail.com").trim();
-  let body = "Hey " + mgr + " \u2014\n" + house + "\nInbox: " + inbox + "\n" + r.sendCore;
+  const src = ($("fileSource").value || "").trim();
+  let body = "Hey " + mgr + " \u2014\n" + house + "\nInbox: " + inbox + "\n";
+  if (src) body += "Source: " + src + ". Net is PDQ Subtotal (ex-tax), not Grand Total.\n";
+  else body += "Totals: typed.\n";
+  body += r.sendCore;
   if (dash && dash.eligible) {
     body += "\n3P: eligible " + money(dash.eligible) + ", documented " + money(dash.documented) + " (" + dash.observedPct.toFixed(2) + "% take). " + dash.flag;
     $("dashout").textContent = dash.flag + (dash.variance != null ? " Payout variance vs documented take: " + money(dash.variance) + "." : "");
