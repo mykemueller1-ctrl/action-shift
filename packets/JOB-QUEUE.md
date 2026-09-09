@@ -8,7 +8,7 @@ One agent · one job. Founder is not the debugger. Do not text him.
 |---|---|---|
 | A | 8:05 AM Z-report ingest fills net + labor | **MERGED** PR #9 (`fa22d139`). Agent bc-01a08663. Close-button fix. Drop fills 3463.35 / 1324.41. |
 | N | Night proof + carry-forward | **MERGED** same PR. `lib/proof.ts`. Verbal yes = acknowledged only. |
-| A2 | Live house inbox writes last-close.json | **NEXT** — packets/03-live-inbox.md. Needs house Gmail env. Do not block the desk on tokens. |
+| A2 | Live house inbox writes last-close.json | **IN PROGRESS** on `cursor/job-a2-live-inbox-0bfb`. ingest-eod.mjs + Netlify 8:05 function. Desk still works with no tokens. |
 | 4 | House inbox field on the desk | OPEN PR #4. Merge if tests pass. Do not rebuild. |
 | DD | DoorDash optional same screen | ALREADY ON DESK. Eligible = Subtotal. Do not rebuild. |
 | B | Stranger connects their Gmail to log in | LATER. After A2 actually prefills from Gmail. |
