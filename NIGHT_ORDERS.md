@@ -1,21 +1,17 @@
 # Night orders — 9 Sep 2026
 
-Founder is asleep. Full permission is granted.
-Grok leads. Cursor follows this repo only. Read CURSOR.md.
+Founder is asleep. Do not text. Job A shipped on this repo only.
+
+## Done
+- `docs/index.html` still defaults Community Tap / Kenzy / 28%. Net + labor stay blank in the HTML. Food stays HOLD. Send is a tap.
+- `lib/ingest.ts` is the 8:05 AM America/Chicago job. Search: `from:pdqreports@pdqpos.com newer_than:1d subject:EOD`.
+- Picks `*ZReport_Summary*` only. Void_Promo and Hourly never hit the desk.
+- Subtotal + Labor Summary Total write `docs/last-close.json` (empty until a Z-report lands) and localStorage. Desk prefills those two numbers after 8:05 if the date is last night. Food is never filled. Kenzy is never auto-texted.
+- Pull last night button fetches last-close. Drop still fills net + labor.
+- `npm test` runs close + ingest. PDQ fixture: net $3,463.35, labor $1,324.41. Lab paste still 35.56%.
 
 ## Need from Myke
-Nothing. Do not text. Do not ask for POS passwords. Do not open never86.
-
-## Cursor job
-Stay on mykemueller1-ctrl/action-shift.
-Product is docs/index.html.
-Verify CTap / Kenzy / 28% / HOLD food / copy text.
-Fix only that page if broken.
-
-Lab paste `Net $3,408.15 Labor $1,211.85` is a math check, not CTap last night.
-Vs 28% expect 35.56% and about $258 heavy.
-Vs 30% expect about $189 heavy. Do not change the CTap default back to 30.
+Nothing. House Gmail is not connected in this agent. Drop the Z-report or run `npm run ingest` when the PDF text is on disk.
 
 ## Do not
-Launch work against mykemueller1-ctrl/never86.
-Do not rebuild 11 agents.
+never86. Vercel. Auto-send. Grill dollars as CTap defaults.

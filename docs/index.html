@@ -40,7 +40,7 @@
   <h1>Last night.</h1>
   <p class="mute">Community Tap is the house. Kenzy is the manager on this seat. Daily inbox is communitypizza2026@gmail.com. House pack is already set. Type two numbers. Close. Send. Food stays HOLD until a same-day count exists.</p>
   <ol class="mute steps">
-    <li>Type last night's net and labor, or drop the PDQ Z-report PDF.</li>
+    <li>After 8:05 AM Chicago the desk pulls last night's Z-report, or type net and labor / drop the PDF.</li>
     <li>Tap <b>Close last night</b>.</li>
     <li>Tap <b>Send this to Kenzy</b>. If it asks for a schedule, it failed.</li>
   </ol>
@@ -65,10 +65,11 @@
     <textarea id="dash" rows="5" placeholder="Subtotal $0.00\nCommission $0.00\nMarketing $0.00\nNet total $0.00"></textarea>
   </label>
   <label class="mute" style="margin-top:14px"><input id="food" type="checkbox" style="display:inline;width:auto" /> I have same-day invoices AND a count</label>
-  <div class="drop" id="drop">Drop the PDQ Z-report PDF, a .txt, or a .csv, or <input id="file" type="file" accept=".pdf,.txt,.csv,.tsv,.md" /></div>
+  <div class="drop" id="drop">Drop the PDQ Z-report PDF, a .txt, or a .csv, or <input id="file" type="file" accept=".pdf,.txt,.csv,.tsv,.md,.json" /></div>
   <input type="hidden" id="fileSource" value="" />
   <p class="mute" id="preview"></p>
   <button id="close">Close last night</button>
+  <button class="ghost" id="pull">Pull last night from the house inbox</button>
   <button class="ghost" id="example">Load CTap DoorDash example (Jan 2026, not last night)</button>
   <p class="err" id="err"></p>
 
@@ -123,6 +124,110 @@ function scrapeLabor(text) {
     netSales: netSales ?? moneyBits[0],
     laborDollars: laborDollars ?? moneyBits[1],
   };
+}
+const LAST_CLOSE_KEY = "action-shift.ctap.last-close";
+const GMAIL_QUERY = "from:pdqreports@pdqpos.com newer_than:1d subject:EOD";
+function chicagoParts(now) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/Chicago",
+    year: "numeric", month: "numeric", day: "numeric",
+    hour: "numeric", minute: "numeric", hourCycle: "h23"
+  }).formatToParts(now || new Date());
+  const n = (t) => Number(parts.find((p) => p.type === t).value);
+  return { year: n("year"), month: n("month"), day: n("day"), hour: n("hour"), minute: n("minute") };
+}
+function after805(now) {
+  const t = chicagoParts(now);
+  return t.hour > 8 || (t.hour === 8 && t.minute >= 5);
+}
+function lastNightStamp(now) {
+  const t = chicagoParts(now);
+  const prev = new Date(Date.UTC(t.year, t.month - 1, t.day) - 86400000);
+  return { year: prev.getUTCFullYear(), month: prev.getUTCMonth() + 1, day: prev.getUTCDate() };
+}
+function parseBizDate(value) {
+  if (!value) return null;
+  const slash = String(value).trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (slash) return { month: +slash[1], day: +slash[2], year: +slash[3] };
+  const iso = String(value).trim().match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (iso) return { year: +iso[1], month: +iso[2], day: +iso[3] };
+  return null;
+}
+function isLastNightDate(value, now) {
+  const p = parseBizDate(value);
+  const y = lastNightStamp(now);
+  return !!(p && p.year === y.year && p.month === y.month && p.day === y.day);
+}
+function normalizeLastClose(raw) {
+  if (!raw || typeof raw !== "object") return null;
+  const net = Number(raw.netSales);
+  const labor = Number(raw.laborDollars);
+  return {
+    house: "Community Tap",
+    manager: "Kenzy",
+    laborTargetPct: 28,
+    businessDate: typeof raw.businessDate === "string" ? raw.businessDate : undefined,
+    netSales: net > 0 ? net : undefined,
+    laborDollars: Number.isFinite(labor) && labor >= 0 ? labor : undefined,
+    food: "HOLD",
+    source: raw.source === "ZReport_Summary" ? "ZReport_Summary" : "",
+    gmailQuery: GMAIL_QUERY,
+    sentToManager: false,
+    error: typeof raw.error === "string" ? raw.error : undefined
+  };
+}
+function readStoredClose() {
+  try { return normalizeLastClose(JSON.parse(localStorage.getItem(LAST_CLOSE_KEY) || "null")); }
+  catch { return null; }
+}
+function writeStoredClose(close) {
+  try { localStorage.setItem(LAST_CLOSE_KEY, JSON.stringify(close)); } catch (e) {}
+}
+function applyLastClose(close, note) {
+  if (!close || !(close.netSales > 0) || close.laborDollars == null) return false;
+  $("net").value = String(close.netSales);
+  $("labor").value = String(close.laborDollars);
+  if (close.businessDate && !$("date").value) $("date").value = close.businessDate;
+  $("food").checked = false;
+  $("fileSource").value = close.source === "ZReport_Summary" ? "PDQ Z-report PDF" : $("fileSource").value;
+  $("err").textContent = "";
+  $("preview").textContent = note || ("Filled from this morning's Z-report. Food stays HOLD. Send is a tap. Search: " + GMAIL_QUERY);
+  return true;
+}
+function shouldApplyClose(close, pulled) {
+  if (!close || close.error) return false;
+  if (!(close.netSales > 0) || close.laborDollars == null) return false;
+  if (!isLastNightDate(close.businessDate)) return false;
+  return pulled || after805();
+}
+async function loadLastCloseFile() {
+  try {
+    const res = await fetch("last-close.json", { cache: "no-store" });
+    if (!res.ok) return null;
+    return normalizeLastClose(await res.json());
+  } catch (e) { return null; }
+}
+async function pullLastNight(pulled) {
+  let close = readStoredClose();
+  if (!shouldApplyClose(close, pulled)) {
+    const remote = await loadLastCloseFile();
+    if (remote) close = remote;
+  }
+  if (shouldApplyClose(close, pulled)) {
+    writeStoredClose(close);
+    applyLastClose(close);
+    return;
+  }
+  if (close && close.error) {
+    $("err").textContent = close.error;
+    $("preview").textContent = "";
+    return;
+  }
+  if (pulled) {
+    $("err").textContent = "No Z-report yet. Type the two numbers. Photos do not parse.";
+  } else if (!after805()) {
+    $("preview").textContent = "Desk waits until 8:05 AM America/Chicago. Drop the Z-report or type the two numbers.";
+  }
 }
 async function pdfToText(buf) {
   const pdf = await pdfjsLib.getDocument({ data: buf }).promise;
@@ -195,6 +300,17 @@ function preview() {
 $("paste").addEventListener("input", preview);
 $("dash").addEventListener("input", preview);
 function eatText(text, source) {
+  const maybeJson = text.trim().startsWith("{") ? (() => { try { return JSON.parse(text); } catch (e) { return null; } })() : null;
+  if (maybeJson && (maybeJson.netSales || maybeJson.gmailQuery || maybeJson.food === "HOLD")) {
+    const close = normalizeLastClose(maybeJson);
+    if (applyLastClose(close, "Fetched last-close. Food stays HOLD. Send is a tap.")) {
+      writeStoredClose(close);
+      $("paste").value = "PDQ Z-report\nSubtotal (net) $" + close.netSales.toFixed(2) + "\nLabor Summary $" + close.laborDollars.toFixed(2);
+    } else {
+      $("err").textContent = (close && close.error) || "Need Subtotal and Labor Summary Total. Photos do not parse. Type the two numbers.";
+    }
+    return;
+  }
   const z = scrapePdqZ(text);
   if (z && z.netSales > 0 && z.laborDollars != null) {
     $("paste").value = "PDQ Z-report\nSubtotal (net) $" + z.netSales.toFixed(2) + "\nLabor Summary $" + z.laborDollars.toFixed(2);
@@ -202,8 +318,14 @@ function eatText(text, source) {
     $("labor").value = String(z.laborDollars);
     if (z.businessDate && !$("date").value) $("date").value = z.businessDate;
     $("fileSource").value = source || z.source;
+    $("food").checked = false;
+    writeStoredClose({
+      house: "Community Tap", manager: "Kenzy", laborTargetPct: 28,
+      businessDate: z.businessDate, netSales: z.netSales, laborDollars: z.laborDollars,
+      food: "HOLD", source: "ZReport_Summary", gmailQuery: GMAIL_QUERY, sentToManager: false
+    });
     preview();
-    $("preview").textContent = "PDQ Z-report: net " + money(z.netSales) + " (Subtotal, not Grand Total) · labor " + money(z.laborDollars);
+    $("preview").textContent = "PDQ Z-report: net " + money(z.netSales) + " (Subtotal, not Grand Total) · labor " + money(z.laborDollars) + ". Food stays HOLD.";
     $("err").textContent = "";
     return;
   }
@@ -216,6 +338,11 @@ async function eatFile(f) {
   if (!f) return;
   const name = f.name || "";
   const type = f.type || "";
+  if (/void[_\s-]*promo|hourly[_\s-]*sales/i.test(name)) {
+    $("err").textContent = "Need the Z-report Summary PDF (Labor Summary + Subtotal). Hourly and void PDFs do not close the night.";
+    $("preview").textContent = "";
+    return;
+  }
   if (/\.(png|jpe?g|gif|webp|heic|heif)$/i.test(name) || type.startsWith("image/")) {
     $("err").textContent = "Photos of Z-outs do not parse. Drop the PDQ Z-report PDF or type the two numbers.";
     return;
@@ -262,6 +389,8 @@ $("example").onclick = () => {
   $("dash").value = "Community Tap DoorDash Jan 2026 example\nSubtotal $8,207.63\nCommission $1,764.27\nMarketing $830.38\nNet total $7,646.86\nEligible = Subtotal. Tips and customer fees do not count.";
   $("preview").textContent = "Example only. Not last night. Paste real PDQ labor to close the night.";
 };
+$("pull").onclick = () => { void pullLastNight(true); };
+void pullLastNight(false);
 $("close").onclick = () => {
   $("err").textContent = "";
   const p = scrapeLabor($("paste").value);
