@@ -32,10 +32,18 @@
     .err { color:var(--move); min-height:1.2em; }
     #out { margin-top:28px; border-top:1px solid var(--rule); padding-top:22px; display:none; }
     .row { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    #carry { display:none; margin-bottom:22px; border-color:var(--hold); }
+    #proof { margin-top:22px; padding-top:18px; border-top:1px solid var(--rule); }
+    select { display:block; width:100%; margin-top:6px; padding:10px 12px; border:1px solid var(--rule); background:#fff; font:inherit; }
   </style>
 </head>
 <body>
 <main>
+  <aside class="drop" id="carry">
+    <p class="eyebrow">Carry-forward</p>
+    <p id="carryline"></p>
+    <p class="mute" id="carrystatus"></p>
+  </aside>
   <p class="eyebrow">Never 86'd · Action Shift · Owner seat</p>
   <h1>Last night.</h1>
   <p class="mute">Community Tap is the house. Kenzy is the manager on this seat. Daily inbox is communitypizza2026@gmail.com. House pack is already set. Type two numbers. Close. Send. Food stays HOLD until a same-day count exists.</p>
@@ -84,6 +92,29 @@
     <pre id="text"></pre>
     <button id="send">Send this to Kenzy</button>
     <button class="ghost" id="mailinbox">Email a copy to the house inbox</button>
+    <div id="proof">
+      <p class="eyebrow">Did the move happen?</p>
+      <p id="proofstatus" class="mute"></p>
+      <p class="mute">Proof the shift created: deposit record, receipt, time-clock export, ticket detail, or exception log. A yes is not done.</p>
+      <label>Proof kind
+        <select id="proofkind">
+          <option value="">Choose one</option>
+          <option value="deposit record">deposit record</option>
+          <option value="receipt">receipt</option>
+          <option value="time-clock export">time-clock export</option>
+          <option value="ticket detail">ticket detail</option>
+          <option value="exception log">exception log</option>
+        </select>
+      </label>
+      <label>Proof note
+        <textarea id="proofnote" rows="2" placeholder="What the file shows. Not a verbal yes."></textarea>
+      </label>
+      <button type="button" id="proofdone">Done</button>
+      <button class="ghost" type="button" id="proofattach">Attach proof</button>
+      <button class="ghost" type="button" id="proofnodone">Not done</button>
+      <button class="ghost" type="button" id="proofmissing">Data missing</button>
+      <button class="ghost" type="button" id="prooffail">Fix failed</button>
+    </div>
   </section>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
@@ -291,6 +322,55 @@ function closeNight(raw) {
   };
 }
 const $ = (id) => document.getElementById(id);
+const LAST_MOVE_KEY = "action-shift.ctap.last-move";
+const PROOF_KINDS = ["deposit record", "receipt", "time-clock export", "ticket detail", "exception log"];
+const CLAIM_BOUNDARY = "Typed values stay Unverified until reconciled to a source. Variance is review work. Not theft. Not guaranteed savings.";
+function emptyMove() {
+  return {
+    house: "Community Tap", manager: "Kenzy", owner: "Kenzy", action: "", verdict: "",
+    claimBoundary: CLAIM_BOUNDARY, evidenceStatus: "open", proofKind: "", proofNote: ""
+  };
+}
+function forbiddenProof(text) {
+  return /schedule photo|who works|5\s*[-–to]+\s*7/i.test(text || "");
+}
+function readMove() {
+  try { return Object.assign(emptyMove(), JSON.parse(localStorage.getItem(LAST_MOVE_KEY) || "null") || {}); }
+  catch (e) { return emptyMove(); }
+}
+function writeMove(move) {
+  try { localStorage.setItem(LAST_MOVE_KEY, JSON.stringify(move)); } catch (e) {}
+}
+function hasMove(move) {
+  return !!(move && (move.action || move.verdict || move.observedDollars != null || move.businessDate));
+}
+function unresolved(move) {
+  return hasMove(move) && move.evidenceStatus !== "verified" && move.evidenceStatus !== "not-done";
+}
+function sameChicagoDay(value, now) {
+  const p = parseBizDate(value);
+  if (!p) return false;
+  const t = chicagoParts(now);
+  return p.year === t.year && p.month === t.month && p.day === t.day;
+}
+function paintProof(move) {
+  $("proofstatus").textContent = hasMove(move)
+    ? (move.verdict || "MOVE") + " · " + (move.evidenceStatus || "open") + " · " + CLAIM_BOUNDARY
+    : CLAIM_BOUNDARY;
+  $("proofkind").value = move.proofKind || "";
+  $("proofnote").value = move.proofNote || "";
+  if (unresolved(move) && hasMove(move) && !sameChicagoDay(move.businessDate)) {
+    $("carry").style.display = "block";
+    $("carryline").textContent = (move.businessDate || "Yesterday") + " · " + (move.action || "One move is still open.");
+    $("carrystatus").textContent = "Status: " + move.evidenceStatus + ". A yes is not done.";
+  } else {
+    $("carry").style.display = "none";
+  }
+}
+function persistMove(move) {
+  writeMove(move);
+  paintProof(move);
+}
 function preview() {
   const p = scrapeLabor($("paste").value);
   const d = scrapeDash($("dash").value);
@@ -394,6 +474,51 @@ $("example").onclick = () => {
 };
 $("pull").onclick = () => { void pullLastNight(true); };
 void pullLastNight(false);
+void (async function loadCarry() {
+  let move = readMove();
+  if (!hasMove(move)) {
+    try {
+      const res = await fetch("last-move.json", { cache: "no-store" });
+      if (res.ok) move = Object.assign(emptyMove(), await res.json());
+    } catch (e) {}
+  }
+  paintProof(move);
+})();
+function applyProofReply(reply) {
+  const move = readMove();
+  if (!hasMove(move)) return;
+  if (forbiddenProof(reply)) {
+    $("err").textContent = "Need a deposit, receipt, time-clock export, ticket detail, or exception log.";
+    return;
+  }
+  persistMove(Object.assign({}, move, { evidenceStatus: reply }));
+}
+$("proofdone").onclick = () => {
+  const move = readMove();
+  const typed = ($("proofnote").value || "").trim();
+  if (forbiddenProof(typed)) {
+    $("err").textContent = "Need a deposit, receipt, time-clock export, ticket detail, or exception log.";
+    return;
+  }
+  if (move.proofKind && PROOF_KINDS.indexOf(move.proofKind) >= 0) {
+    persistMove(Object.assign({}, move, { evidenceStatus: "verified" }));
+    return;
+  }
+  persistMove(Object.assign({}, move, { evidenceStatus: "acknowledged" }));
+};
+$("proofattach").onclick = () => {
+  const move = readMove();
+  const kind = $("proofkind").value;
+  const note = ($("proofnote").value || "").trim();
+  if (forbiddenProof(kind + " " + note) || PROOF_KINDS.indexOf(kind) < 0 || !note) {
+    $("err").textContent = "Attach one allowed proof kind and a note. A yes is not done.";
+    return;
+  }
+  persistMove(Object.assign({}, move, { proofKind: kind, proofNote: note, evidenceStatus: "done-awaiting-proof" }));
+};
+$("proofnodone").onclick = () => applyProofReply("not-done");
+$("proofmissing").onclick = () => applyProofReply("data-missing");
+$("prooffail").onclick = () => applyProofReply("fix-failed");
 $("close").onclick = () => {
   $("err").textContent = "";
   const p = scrapeLabor($("paste").value);
@@ -440,6 +565,12 @@ $("close").onclick = () => {
   $("text").textContent = body;
   $("send").textContent = "Send this to " + mgr;
   $("out").style.display = "block";
+  persistMove({
+    house: house, manager: mgr, owner: mgr,
+    businessDate: $("date").value || undefined,
+    verdict: r.verdict, action: r.move, observedDollars: labor,
+    claimBoundary: CLAIM_BOUNDARY, evidenceStatus: "open", proofKind: "", proofNote: ""
+  });
   $("send").onclick = async () => {
     await navigator.clipboard.writeText(body);
     $("send").textContent = "Copied — paste to " + mgr;
