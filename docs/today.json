@@ -1,0 +1,24 @@
+{
+  "house": "Community Tap",
+  "manager": "Kenzy",
+  "inbox": "communitypizza2026@gmail.com",
+  "timezone": "America/Chicago",
+  "readyAfter": "08:00",
+  "businessDate": "9/8/2026",
+  "netSales": 3463.35,
+  "laborDollars": 1324.41,
+  "netLabel": "PDQ Subtotal (ex-tax)",
+  "laborLabel": "Labor Summary Total",
+  "source": "House inbox · PDQ Z-report",
+  "food": "HOLD",
+  "mix": {
+    "food": 2454.28,
+    "pop": 67,
+    "liquor": 375.25,
+    "beer": 623.5,
+    "rolledIntoFood": ["Spec Instruction", "UKNOWN", "Large Pizzas"]
+  },
+  "pulledAt": "2026-09-09T09:11:00-05:00",
+  "messageId": "1a085d3affae8924",
+  "subject": "EOD Reports Generated From Community Pizza 515-955-8202 9/9/2026 6:00:35 AM"
+}

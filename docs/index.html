@@ -22,6 +22,10 @@
     .drop { margin-top:16px; padding:16px; border:1px dashed var(--rule); background:#fff; }
     .tiles { display:grid; grid-template-columns:1fr; gap:10px; margin:20px 0; }
     @media (min-width:640px) { .tiles { grid-template-columns:1fr 1fr 1fr; } }
+    .mixes { margin-top:0; }
+    @media (min-width:640px) { .mixes { grid-template-columns:1fr 1fr 1fr 1fr; } }
+    .mixes .tile { min-height:88px; }
+    .mixes .tile b { font-size:20px; }
     .tile { background:#fff; border:1px solid var(--rule); padding:14px 14px 12px; min-height:108px; }
     .tile b { display:block; font-size:26px; margin:6px 0 2px; }
     .tile.MOVE { border-color:var(--move); }
@@ -38,10 +42,10 @@
 <main>
   <p class="eyebrow">Never 86'd · Action Shift · Owner seat</p>
   <h1>Last night.</h1>
-  <p class="mute">Community Tap is the house. Kenzy is the manager on this seat. Daily inbox is communitypizza2026@gmail.com. House pack is already set. Type two numbers. Close. Send. Food stays HOLD until a same-day count exists.</p>
+  <p class="mute">Community Tap is the house. Kenzy is the manager on this seat. Daily inbox is communitypizza2026@gmail.com. EOD lands 6–8 AM. After 8 AM Central, last night auto-fills from the house inbox. Food stays HOLD until a same-day count exists.</p>
   <ol class="mute steps">
-    <li>Type last night's net and labor, or drop the PDQ Z-report PDF.</li>
-    <li>Tap <b>Close last night</b>.</li>
+    <li>After 8 AM, last night should already be filled. If not, drop the PDQ Z-report PDF.</li>
+    <li>Read labor, versus target, food cost (HOLD), and sales mix: food · pop · liquor · beer.</li>
     <li>Tap <b>Send this to Kenzy</b>. If it asks for a schedule, it failed.</li>
   </ol>
 
@@ -77,7 +81,13 @@
     <div class="tiles">
       <div class="tile" id="t1"><span class="eyebrow">Labor</span><b id="pct"></b><span id="formula"></span></div>
       <div class="tile" id="t2"><span class="eyebrow">Versus target</span><b id="heavy"></b><span id="move"></span></div>
-      <div class="tile HOLD" id="t3"><span class="eyebrow">Food</span><b id="foodv">HOLD</b><span id="hold"></span></div>
+      <div class="tile HOLD" id="t3"><span class="eyebrow">Food cost</span><b id="foodv">HOLD</b><span id="hold"></span></div>
+    </div>
+    <div class="tiles mixes" id="mixrow" style="display:none">
+      <div class="tile" id="mfood"><span class="eyebrow">Sales mix · Food</span><b id="mixfood"></b><span id="mixfoodnote"></span></div>
+      <div class="tile" id="mpop"><span class="eyebrow">Sales mix · Pop</span><b id="mixpop"></b></div>
+      <div class="tile" id="mliq"><span class="eyebrow">Sales mix · Liquor</span><b id="mixliq"></b></div>
+      <div class="tile" id="mbeer"><span class="eyebrow">Sales mix · Beer</span><b id="mixbeer"></b></div>
     </div>
     <div id="dashout" class="mute"></div>
     <pre id="text"></pre>
@@ -113,6 +123,70 @@ function scrapePdqZ(text) {
   if (!(netSales > 0) && !(laborDollars >= 0)) return null;
   return { netSales, laborDollars, businessDate: date && date[1], source: "PDQ Z-report PDF" };
 }
+function classifyMixBucket(name) {
+  const n = String(name || "").toLowerCase().trim();
+  if (/\bpop\b/.test(n) || /\bsoda\b/.test(n) || n.includes("soft drink") || n.includes("fountain")) return "pop";
+  if (n.includes("liquor") || n.includes("spirit") || n.includes("cocktail") || /\bwine\b/.test(n)) return "liquor";
+  if (/\bbeer\b/.test(n)) return "beer";
+  return "food";
+}
+function cleanMixName(raw) {
+  let name = String(raw || "").replace(/\s+/g, " ").trim();
+  name = name.replace(/^menu category(?:\s+category)?(?:\s+name)?(?:\s+qty)?(?:\s+amount)?(?:\s+total)?\s+/i, "");
+  if (!name || /^(name|qty|amount|total|category(?:\s+name)?)$/i.test(name)) return "";
+  return name;
+}
+function scrapePdqMenuMix(raw) {
+  if (!raw) return null;
+  const start = raw.search(/menu\s+category(?!\s+total)/i);
+  if (start < 0) return null;
+  let block = raw.slice(start);
+  const totalAt = block.search(/menu\s+category\s+total/i);
+  if (totalAt > 0) block = block.slice(0, totalAt);
+  const re = /([A-Za-z][A-Za-z0-9 &'/.-]*(?:\s+[A-Za-z][A-Za-z0-9 &'/.-]*)*)\s+(\d{1,4})\s+(\(\s*\$?-?[\d,]+\.\d{2}\s*\)|\$?-?[\d,]+\.\d{2})/g;
+  const lines = [];
+  let m;
+  while ((m = re.exec(block))) {
+    const name = cleanMixName(m[1]);
+    if (!name) continue;
+    const token = m[3].trim();
+    const n = Number(token.replace(/[$,()\s]/g, ""));
+    if (!Number.isFinite(n)) continue;
+    const amount = /^\(/.test(token) ? -Math.abs(n) : n;
+    lines.push({ name, qty: Number(m[2]), amount });
+  }
+  if (!lines.length) return null;
+  const mix = { food: 0, pop: 0, liquor: 0, beer: 0, lines, rolledIntoFood: [] };
+  for (const line of lines) {
+    const bucket = classifyMixBucket(line.name);
+    mix[bucket] += line.amount;
+    if (bucket === "food" && !/^foods?$/i.test(line.name)) mix.rolledIntoFood.push(line);
+  }
+  ["food", "pop", "liquor", "beer"].forEach((k) => { mix[k] = Math.round(mix[k] * 100) / 100; });
+  return mix;
+}
+function mixFromPayload(payload) {
+  const src = payload && payload.mix;
+  if (!src) return null;
+  const rolled = (src.rolledIntoFood || []).map((x) => typeof x === "string" ? { name: x, qty: null, amount: 0 } : x);
+  return {
+    food: Number(src.food) || 0,
+    pop: Number(src.pop) || 0,
+    liquor: Number(src.liquor) || 0,
+    beer: Number(src.beer) || 0,
+    lines: src.lines || [],
+    rolledIntoFood: rolled
+  };
+}
+function mixLine(mix) {
+  if (!mix) return "";
+  let s = "Mix: food " + money(mix.food) + " · pop " + money(mix.pop) + " · liquor " + money(mix.liquor) + " · beer " + money(mix.beer) + ".";
+  if (mix.rolledIntoFood && mix.rolledIntoFood.length) {
+    s += " Food mix includes " + mix.rolledIntoFood.map((x) => x.name || x).join(", ") + " — check later.";
+  }
+  return s;
+}
+let lastMix = null;
 function scrapeLabor(text) {
   const z = scrapePdqZ(text);
   if (z && z.netSales > 0 && z.laborDollars != null) return z;
@@ -187,7 +261,9 @@ function preview() {
   const p = scrapeLabor($("paste").value);
   const d = scrapeDash($("dash").value);
   const bits = [];
+  const mix = scrapePdqMenuMix($("paste").value) || lastMix;
   if (p.netSales) bits.push("PDQ read net " + money(p.netSales) + (p.laborDollars != null ? " · labor " + money(p.laborDollars) : ""));
+  if (mix) bits.push(mixLine(mix));
   if (d && d.eligible) bits.push("DoorDash eligible " + money(d.eligible) + " · documented " + money(d.documented) + " · " + d.observedPct.toFixed(2) + "%");
   if (d && d.note) bits.push(d.note);
   $("preview").textContent = bits.join("  |  ");
@@ -202,8 +278,9 @@ function eatText(text, source) {
     $("labor").value = String(z.laborDollars);
     if (z.businessDate && !$("date").value) $("date").value = z.businessDate;
     $("fileSource").value = source || z.source;
+    lastMix = scrapePdqMenuMix(text) || lastMix;
     preview();
-    $("preview").textContent = "PDQ Z-report: net " + money(z.netSales) + " (Subtotal, not Grand Total) · labor " + money(z.laborDollars);
+    $("preview").textContent = "PDQ Z-report: net " + money(z.netSales) + " (Subtotal, not Grand Total) · labor " + money(z.laborDollars) + (lastMix ? " · " + mixLine(lastMix) : "");
     $("err").textContent = "";
     return;
   }
@@ -285,10 +362,13 @@ $("close").onclick = () => {
   const house = $("store").value || "Community Tap";
   const inbox = ($("inbox").value || "communitypizza2026@gmail.com").trim();
   const src = ($("fileSource").value || "").trim();
+  const mix = scrapePdqMenuMix($("paste").value) || lastMix;
+  lastMix = mix || lastMix;
   let body = "Hey " + mgr + " \u2014\n" + house + "\nInbox: " + inbox + "\n";
   if (src) body += "Source: " + src + ". Net is PDQ Subtotal (ex-tax), not Grand Total.\n";
   else body += "Totals: typed.\n";
   body += r.sendCore;
+  if (mix) body += "\n" + mixLine(mix);
   if (dash && dash.eligible) {
     body += "\n3P: eligible " + money(dash.eligible) + ", documented " + money(dash.documented) + " (" + dash.observedPct.toFixed(2) + "% take). " + dash.flag;
     $("dashout").textContent = dash.flag + (dash.variance != null ? " Payout variance vs documented take: " + money(dash.variance) + "." : "");
@@ -305,6 +385,18 @@ $("close").onclick = () => {
   $("t1").className = "tile " + r.verdict;
   $("t2").className = "tile " + r.verdict;
   $("t3").className = "tile " + ($("food").checked ? "CLEAN" : "HOLD");
+  if (mix) {
+    $("mixfood").textContent = money(mix.food);
+    $("mixpop").textContent = money(mix.pop);
+    $("mixliq").textContent = money(mix.liquor);
+    $("mixbeer").textContent = money(mix.beer);
+    $("mixfoodnote").textContent = mix.rolledIntoFood && mix.rolledIntoFood.length
+      ? "Includes " + mix.rolledIntoFood.map((x) => x.name || x).join(", ") + " — check later."
+      : "Sales dollars, not food cost.";
+    $("mixrow").style.display = "grid";
+  } else {
+    $("mixrow").style.display = "none";
+  }
   $("text").textContent = body;
   $("send").textContent = "Send this to " + mgr;
   $("out").style.display = "block";
@@ -318,6 +410,52 @@ $("close").onclick = () => {
     window.location.href = mailto;
   };
 };
+function chicagoHour(now) {
+  return Number(new Intl.DateTimeFormat("en-US", { timeZone: "America/Chicago", hour: "2-digit", hourCycle: "h23" }).formatToParts(now).find((p) => p.type === "hour").value);
+}
+function chicagoDay(now) {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/Chicago", year: "numeric", month: "2-digit", day: "2-digit" }).format(now);
+}
+function applyToday(payload) {
+  if (!(payload.netSales > 0) || payload.laborDollars == null) return false;
+  $("store").value = payload.house || "Community Tap";
+  $("mgr").value = payload.manager || "Kenzy";
+  $("inbox").value = payload.inbox || "communitypizza2026@gmail.com";
+  $("date").value = payload.businessDate || "";
+  $("net").value = String(payload.netSales);
+  $("labor").value = String(payload.laborDollars);
+  $("paste").value = "PDQ Z-report\nSubtotal (net) $" + Number(payload.netSales).toFixed(2) + "\nLabor Summary $" + Number(payload.laborDollars).toFixed(2);
+  $("fileSource").value = payload.source || "House inbox · PDQ Z-report";
+  lastMix = mixFromPayload(payload) || lastMix;
+  $("preview").textContent = "Auto-filled after 8 AM Central from the house inbox. Net is Subtotal, not Grand Total. Food cost stays HOLD." + (lastMix ? " " + mixLine(lastMix) : "");
+  $("err").textContent = "";
+  $("close").click();
+  return true;
+}
+async function autoFill() {
+  const now = new Date();
+  if (chicagoHour(now) < 8) {
+    $("preview").textContent = "EOD lands 6–8 AM. Last night auto-fills after 8 AM Central.";
+    return;
+  }
+  if ($("net").value || $("labor").value) return;
+  try {
+    const gate = await fetch("/api/today", { cache: "no-store" }).then((r) => r.json()).catch(() => ({ ready: true, useStatic: true }));
+    if (gate && gate.ready === false) {
+      $("preview").textContent = gate.reason || "EOD lands 6–8 AM. Last night auto-fills after 8 AM Central.";
+      return;
+    }
+    const payload = await fetch("/today.json", { cache: "no-store" }).then((r) => r.json());
+    if (payload.pulledAt && chicagoDay(new Date(payload.pulledAt)) !== chicagoDay(now)) {
+      $("preview").textContent = "Today's house-inbox pull is not in yet. Drop the PDQ Z-report PDF.";
+      return;
+    }
+    applyToday(payload);
+  } catch (e) {
+    $("preview").textContent = "Could not auto-fill. Drop the PDQ Z-report PDF.";
+  }
+}
+autoFill();
 </script>
 </body>
 </html>
