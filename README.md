@@ -6,7 +6,7 @@ This is not the Never86 OS. This is not Taco Bamba. This is not scheduling softw
 
 ## What it does
 
-1. Owner drops sales + labor for one store, one day.
+1. Owner drops sales + labor for one store, one day — paste, type, or Toast CSV (Sales Summary + Labor Breakdown).
 2. Desk shows labor dollars, net sales, percent, and the formula.
 3. One move, or HOLD.
 4. One text to one manager.

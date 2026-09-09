@@ -20,11 +20,14 @@ export type CloseResult = {
   laborPct: number;
   targetPct: number;
   heavyDollars: number;
+  heavyLine: string;
   verdict: "MOVE" | "HOLD" | "CLEAN";
   move: string;
   hold: string;
   sendText: string;
   formula: string;
+  totalsLabel: "Typed totals";
+  foodLabel: "Food is MISSING" | "Food evidence present";
   evidence: "VERIFIED-FROM-TYPED-TOTALS" | "MISSING-FOOD";
 };
 
@@ -71,11 +74,14 @@ export function closeNight(raw: CloseInput): CloseResult {
     laborPct,
     targetPct: raw.laborTargetPct,
     heavyDollars,
+    heavyLine: `${money(heavyDollars)} heavy vs ${raw.laborTargetPct.toFixed(0)}%`,
     verdict,
     move,
     hold,
     sendText,
     formula: `${money(raw.laborDollars)} ÷ ${money(raw.netSales)} = ${laborPct.toFixed(2)}%`,
+    totalsLabel: "Typed totals",
+    foodLabel: raw.hasFoodEvidence ? "Food evidence present" : "Food is MISSING",
     evidence: raw.hasFoodEvidence ? "VERIFIED-FROM-TYPED-TOTALS" : "MISSING-FOOD",
   };
 }

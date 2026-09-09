@@ -8,4 +8,4 @@
 }
 * { box-sizing: border-box; }
 html, body { margin: 0; background: var(--paper); color: var(--ink); font-family: Georgia, serif; }
-button, input { font: inherit; }
+button, input, textarea { font: inherit; }
