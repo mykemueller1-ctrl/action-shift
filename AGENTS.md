@@ -7,6 +7,7 @@ Read CURSOR.md first.
 ## Build this
 File drop → labor close → one move or HOLD → Send this to [manager].
 Defaults: Community Tap, Kenzy, 28% labor target, PDQ paste, food HOLD.
+When this becomes a downloaded app, keep CONSUMER.md. Easy for Kenzy. Same math.
 
 ## Never do
 - Touch mykemueller1-ctrl/never86 or never86-desk

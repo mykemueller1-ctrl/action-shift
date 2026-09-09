@@ -12,6 +12,8 @@
     h1 { font-size:42px; font-style:italic; font-weight:500; margin:0 0 .4rem; }
     .eyebrow { letter-spacing:.16em; font-size:11px; text-transform:uppercase; }
     .mute { color:var(--mute); max-width:560px; line-height:1.45; }
+    ol.steps { max-width:560px; padding-left:1.25rem; line-height:1.5; }
+    ol.steps li { margin:0.25rem 0; }
     label { display:block; margin-top:12px; font-size:15px; }
     input, textarea, button { font:inherit; }
     input, textarea { display:block; width:100%; margin-top:6px; padding:10px 12px; border:1px solid var(--rule); background:#fff; }
@@ -36,12 +38,18 @@
 <main>
   <p class="eyebrow">Never 86'd · Action Shift · Owner seat</p>
   <h1>Last night.</h1>
-  <p class="mute">Community Tap is the house. Kenzy is the manager on this seat. Paste PDQ numbers or a DoorDash statement. One close. One move or HOLD. Food stays HOLD until a same-day count exists.</p>
+  <p class="mute">Community Tap is the house. Kenzy is the manager on this seat. Daily inbox is communitypizza2026@gmail.com. House pack is already set. Type two numbers. Close. Send. Food stays HOLD until a same-day count exists.</p>
+  <ol class="mute steps">
+    <li>Type last night's net and labor, or drop a file.</li>
+    <li>Tap <b>Close last night</b>.</li>
+    <li>Tap <b>Send this to Kenzy</b>. If it asks for a schedule, it failed.</li>
+  </ol>
 
   <div class="row">
     <label>House <input id="store" value="Community Tap" /></label>
     <label>One manager <input id="mgr" value="Kenzy" /></label>
   </div>
+  <label>Daily inbox <input id="inbox" value="communitypizza2026@gmail.com" /></label>
   <div class="row">
     <label>Business date <input id="date" placeholder="last night" /></label>
     <label>House labor target % <input id="target" value="28" /></label>
@@ -73,6 +81,7 @@
     <div id="dashout" class="mute"></div>
     <pre id="text"></pre>
     <button id="send">Send this to Kenzy</button>
+    <button class="ghost" id="mailinbox">Email a copy to the house inbox</button>
   </section>
 </main>
 <script>
@@ -203,7 +212,8 @@ $("close").onclick = () => {
   const dash = scrapeDash($("dash").value);
   const mgr = $("mgr").value || "the manager";
   const house = $("store").value || "Community Tap";
-  let body = "Hey " + mgr + " \u2014\n" + house + "\n" + r.sendCore;
+  const inbox = ($("inbox").value || "communitypizza2026@gmail.com").trim();
+  let body = "Hey " + mgr + " \u2014\n" + house + "\nInbox: " + inbox + "\n" + r.sendCore;
   if (dash && dash.eligible) {
     body += "\n3P: eligible " + money(dash.eligible) + ", documented " + money(dash.documented) + " (" + dash.observedPct.toFixed(2) + "% take). " + dash.flag;
     $("dashout").textContent = dash.flag + (dash.variance != null ? " Payout variance vs documented take: " + money(dash.variance) + "." : "");
@@ -226,6 +236,11 @@ $("close").onclick = () => {
   $("send").onclick = async () => {
     await navigator.clipboard.writeText(body);
     $("send").textContent = "Copied — paste to " + mgr;
+  };
+  $("mailinbox").onclick = () => {
+    const subject = encodeURIComponent(house + " last night — Action Shift");
+    const mailto = "mailto:" + encodeURIComponent(inbox) + "?subject=" + subject + "&body=" + encodeURIComponent(body);
+    window.location.href = mailto;
   };
 };
 </script>

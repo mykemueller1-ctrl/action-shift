@@ -12,6 +12,7 @@ Founder is asleep. Do not text him. Do not ask for POS passwords.
 
 ## Product
 `docs/index.html` is the product. Netlify publishes `docs/`. jsDelivr is the morning door.
+The downloadable operator/manager app stays this same loop. Read `CONSUMER.md` before adding screens.
 
 Live pin:
 https://cdn.jsdelivr.net/gh/mykemueller1-ctrl/action-shift@02af3dc/docs/index.html

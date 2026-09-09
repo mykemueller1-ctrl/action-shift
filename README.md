@@ -4,6 +4,8 @@ Owner seat for Community Tap. Drop last night. Get one number. Send one text to 
 
 This is the OS loop, not the 133-table platform.
 
+When Kenzy or another manager downloads the app, keep that same loop. The contract is `CONSUMER.md`.
+
 ## Morning test
 
 Open either door:
@@ -14,7 +16,7 @@ Open either door:
 Then:
 
 1. Leave House = Community Tap and manager = Kenzy.
-2. Paste CTap net sales + labor dollars from PDQ. Not Grill. Not Bamba.
+2. Paste CTap net sales + labor dollars from PDQ (or from communitypizza2026@gmail.com). Not Grill. Not Bamba.
 3. Hit **Close last night**.
 4. Read the three tiles. Food stays HOLD unless you actually have a count.
 5. Hit **Send this to Kenzy** and paste the text.

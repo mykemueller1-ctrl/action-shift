@@ -29,6 +29,7 @@ The operating system is the loop:
 
 ## What this repo is
 The owner-seat desk. Static. No Vercel. Live on Netlify + jsDelivr.
+The downloadable operator/manager app must stay this loop. See CONSUMER.md.
 
 ## What this repo is not
 Workers PWA. PIN pads. Voids roster. Bamba Compass. Eleven agents. Reddit GTM. Pulse weekly invoice OCR.
