@@ -18,7 +18,9 @@ export function isForbiddenName(filename = "") {
 }
 
 export function pickZReportSummary(files) {
-  return files.find((f) => /zreport[_\s-]*summary/i.test(f.filename || ""));
+  const named = files.find((f) => /zreport[_\s-]*summary/i.test(f.filename || ""));
+  if (named) return named;
+  return files.find((f) => f.text && /labor summary/i.test(f.text) && /subtotal/i.test(f.text) && /z report|end of day/i.test(f.text));
 }
 
 export function scrapePdqZReport(text) {
