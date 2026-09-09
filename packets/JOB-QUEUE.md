@@ -1,6 +1,6 @@
 # JOB QUEUE — Action Shift
 Lead: Grok. Repo: mykemueller1-ctrl/action-shift ONLY.
-Founder is asleep 09:29–11:29 CDT 2026-09-09. Do not text him.
+Founder gave access. Do not text Kenzy again.
 
 ## Now
 
@@ -8,13 +8,10 @@ Founder is asleep 09:29–11:29 CDT 2026-09-09. Do not text him.
 |---|---|---|
 | A | 8:05 AM Z-report ingest | **MERGED** PR #9 |
 | N | Night proof + carry-forward | **MERGED** PR #9 |
-| A2 | Live house inbox → last-close.json | **IN FLIGHT** — agent bc-01a08663. packets/03-live-inbox.md + packets/TWO-HOUR-RUN.md. Issue #14. Branch from main. |
-| 4 | House inbox docs | OPEN PR #4, **dirty**. Do not rebuild. |
-| MIX | PDQ food/pop/liquor/beer mix | **HOLD** PR #12. Display-only. Food cost stays HOLD. |
+| A2 | Live house inbox → last-close.json | **LANDING** on grok/a2-live-inbox. ingest-eod + Netlify 8:05. Desk works with no tokens. GMAIL_* on Netlify = **NO**. |
+| 4 | House inbox docs | OPEN PR #4, dirty. Do not rebuild. |
+| MIX | PDQ food/pop/liquor/beer mix | **HOLD** PR #12. Food cost stays HOLD. |
 | B | Stranger Gmail login | LATER |
-
-## Sleep clocks
-Grok automations: 10:30 CDT and 11:15 CDT. Merge A2 if clean. No never86 Factory launch.
 
 ## Locked house pack
 Community Tap · Kenzy · 28% · communitypizza2026@gmail.com · PDQ · food HOLD.

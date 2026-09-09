@@ -1,15 +1,14 @@
 # Night orders — 9 Sep 2026
 
-No Copilot. No never86. Founder is not the debugger.
+Myke gave Grok access. Do not text. Kenzy already has the labor note. Do not send again.
 
 ## Done
-- Rebased `cursor/job-a-morning-ingest-0bfb` onto main. Kept Job A ingest: Pull last night, last-close.json, scrapePdqZ, no Void_Promo. Kept main’s 9/8 last-close (net $3,463.35 / labor $1,324.41 / HOLD).
-- Job N: `lib/proof.ts` + `tests/proof.test.ts` + `docs/last-move.json` (empty shape, no live CTap dollars).
-- After Close last night the desk persists one move. Night row: Did the move happen?
-- Done / yes with no proof = acknowledged. Proof kind + note = done-awaiting-proof. Verified only when a kind is attached. Also: not-done, data-missing, fix-failed.
-- Unresolved last-move carries to the top next morning.
-- House pack still Community Tap / Kenzy / 28% / blank net+labor / food HOLD. Lab paste still 35.56% / ~$258 heavy / MOVE / HOLD.
-- Kenzy already has the 9/8 labor note. Do not send again. last-close `sentToManager` is true. last-move is acknowledged, not verified. Tomorrow’s file still has to prove the mid cut.
+- PR #9 is on main. Job A + Job N landed.
+- A2 pipe: `scripts/ingest-eod.mjs` / `npm run ingest` writes `docs/last-close.json` from ZReport_Summary text only. Void_Promo ignored. Food HOLD. Same-night sentToManager stays true.
+- Netlify function `ctap-eod` scheduled 13:05/14:05 UTC (8:05 Chicago). Tokens from Netlify env only. Missing env does not wipe the desk.
+- Pull last night still reads last-close.json, then the function if present.
+- Grok checked Netlify `action-shift`: **no GMAIL_* secrets**. Live house-box fetch will not run until those three keys exist for communitypizza2026@gmail.com. Drop / npm run ingest still works.
+- Tomorrow proof kind for the mid cut: **time-clock export** first. Deposit / receipt / ticket detail also allowed. A text is not proof.
 
 ## Do not
-Auto-text Kenzy. Schedule photo. Who works 5–7. Rewrite close math. Vercel.
+never86. Vercel. Copilot. Auto-text Kenzy. Job B. Invent food.

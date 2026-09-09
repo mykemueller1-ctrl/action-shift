@@ -234,11 +234,16 @@ function shouldApplyClose(close, pulled) {
   return pulled || after805();
 }
 async function loadLastCloseFile() {
-  try {
-    const res = await fetch("last-close.json", { cache: "no-store" });
-    if (!res.ok) return null;
-    return normalizeLastClose(await res.json());
-  } catch (e) { return null; }
+  const urls = ["last-close.json", "/.netlify/functions/ctap-eod"];
+  for (const url of urls) {
+    try {
+      const res = await fetch(url, { cache: "no-store" });
+      if (!res.ok) continue;
+      const close = normalizeLastClose(await res.json());
+      if (close && close.netSales > 0 && close.laborDollars != null) return close;
+    } catch (e) {}
+  }
+  return null;
 }
 async function pullLastNight(pulled) {
   let close = readStoredClose();
