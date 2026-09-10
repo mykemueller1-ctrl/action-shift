@@ -1,4 +1,5 @@
 /** House EOD pipe. No tokens in git. Do not parse Void_Promo. Do not mail Kenzy. */
+import { extractPdfText, looksLikePdf } from "./pdf-text.mjs";
 
 export const HOUSE = {
   house: "Community Tap",
@@ -150,12 +151,20 @@ export async function fetchHouseEodFiles(env = process.env) {
   const att = await attRes.json().catch(() => ({}));
   if (!att.data) return { error: PARSE_FAIL, files: [] };
   const buf = Buffer.from(att.data.replace(/-/g, "+").replace(/_/g, "/"), "base64");
-  const asText = buf.toString("utf8");
-  if (/labor summary/i.test(asText) && /subtotal/i.test(asText)) {
-    return { files: [{ filename: z.filename, text: asText }] };
+  const text = extractPdfText(buf);
+  if (/labor summary/i.test(text) && /subtotal/i.test(text)) {
+    return { files: [{ filename: z.filename, text }] };
   }
   return {
     error: "Need extracted Z-report text. PDF has no text layer here. Type the two numbers. Photos do not parse.",
     files: [{ filename: z.filename, text: "" }],
   };
+}
+
+/** Read a dropped Z-report path. PDF or extracted text. Never Void_Promo. */
+export function readDroppedReport(path, readFileSync) {
+  const filename = String(path).split(/[\\/]/).pop() || path;
+  const buf = readFileSync(path);
+  const text = extractPdfText(buf);
+  return { filename, text, pdf: looksLikePdf(buf) };
 }

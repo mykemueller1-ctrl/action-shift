@@ -1,16 +1,16 @@
-# Night orders — 9 Sep 2026
+# Night orders — 10 Sep 2026
 
-Yes: one seat is enough. Pulse, voids, and 11 agents stay off this desk.
+Social tokens are down. This seat does not post. Work stayed on the desk.
 
 ## Done
-- Owner seat loop on `docs/index.html`: what happened → one MOVE/HOLD → Send (human) → time-clock proof.
-- GMAIL secrets are NO. Ingest stays drop / `npm run ingest`. House box communitypizza2026 only.
-- Kenzy already has 9/8 labor. Do not send again. Move acknowledged until a time-clock export lands. Names are not read.
-- June CTap Z fixtures (totals only): 6/7 net $5,925.28 labor $1,609.27 light HOLD; 6/8 net $2,725.76 labor $1,155.25 MOVE. Never Grand Total.
-- One MOVE at a time. Unresolved cut stays until verified or not-done.
+- `npm run ingest` with no file and no house Gmail no longer writes fixture dollars as last night.
+- Dropped `*ZReport_Summary*.pdf` (text layer, plain or Flate) now extracts Subtotal + Labor Summary Total. Void_Promo still ignored. Food HOLD. No Kenzy send.
+- Light labor copy matches the packet: do not add a body from this screen. Formula unchanged. CTap 28%.
 
-## Ask SuperGrok
-Time-clock is the proof kind. After you read this, ask Cursor whether #16 (this seat) is ready to merge. No second Kenzy text.
+## Still true
+- House Gmail env is NO. Pull last night needs a dropped Z-report or a written last-close.json.
+- 9/8 MOVE is acknowledged. Proof kind is time-clock export. A yes is not done.
+- Do not send Kenzy again.
 
 ## Do not
-never86. Pulse. Void names. Menu-mix PR #12. Vercel. Invent food.
+never86. Pulse. Mix PR #12. Vercel. Invent food. Auto-text. Social bots.
