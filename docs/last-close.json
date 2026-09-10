@@ -1,16 +1,16 @@
 {
-  "house": "Community Tap",
+  "house": "Community Pizza",
   "manager": "Kenzy",
   "laborTargetPct": 28,
-  "businessDate": "9/8/2026",
-  "netSales": 3463.35,
-  "laborDollars": 1324.41,
-  "laborPct": 38.24,
-  "heavyDollars": 354.67,
-  "verdict": "MOVE",
+  "businessDate": "9/9/2026",
+  "netSales": 4105.23,
+  "laborDollars": 1310.07,
+  "laborPct": 31.91,
+  "heavyDollars": null,
+  "verdict": null,
   "food": "HOLD",
   "source": "ZReport_Summary",
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
-  "sentToManager": true,
-  "ingestedAt": "2026-09-09T13:51:00Z"
+  "sentToManager": false,
+  "ingestedAt": "2026-09-10T11:01:16Z"
 }
