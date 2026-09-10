@@ -1,21 +1,24 @@
 /**
- * Packet 3 — write docs/last-close.json from ZReport_Summary text.
+ * Packet 3 — write docs/last-close.json from ZReport_Summary text or PDF.
  *   node scripts/ingest-eod.mjs [files...]
- *   npm run ingest
+ *   npm run ingest -- path/to/ZReport_Summary.pdf
  * After 6 AM America/Chicago, Grok/Cursor runs this. Does not mail Kenzy.
  * House Gmail tokens stay in Netlify env, never in git.
+ * No file and no house Gmail → do not write fixture dollars.
  */
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
-import { basename, resolve } from "node:path";
-import { hasHouseGmailEnv, fetchHouseEodFiles, runMorningIngest } from "./eod-lib.mjs";
+import { resolve } from "node:path";
+import {
+  hasHouseGmailEnv,
+  fetchHouseEodFiles,
+  runMorningIngest,
+  readDroppedReport,
+} from "./eod-lib.mjs";
 
 const outPath = process.env.LAST_CLOSE_PATH || resolve("docs/last-close.json");
 const prior = existsSync(outPath) ? JSON.parse(readFileSync(outPath, "utf8")) : null;
 
-let files = process.argv.slice(2).map((p) => ({
-  filename: basename(p),
-  text: readFileSync(p, "utf8"),
-}));
+let files = process.argv.slice(2).map((p) => readDroppedReport(p, readFileSync));
 
 if (!files.length && hasHouseGmailEnv()) {
   const fetched = await fetchHouseEodFiles();
@@ -29,12 +32,11 @@ if (!files.length && hasHouseGmailEnv()) {
 }
 
 if (!files.length) {
-  files = [
-    {
-      filename: "ZReport_Summary Community Pizza.txt",
-      text: readFileSync(resolve("tests/fixtures/pdq-zreport.txt"), "utf8"),
-    },
-  ];
+  console.error(
+    "Need the Z-report Summary PDF (Labor Summary + Subtotal). House Gmail env is not set. Drop the file or type the two numbers. Photos do not parse.",
+  );
+  process.exitCode = 1;
+  process.exit();
 }
 
 const close = runMorningIngest(files, prior);

@@ -48,6 +48,8 @@ export function closeNight(raw: CloseInput): CloseResult {
   if (heavyDollars > 25) {
     verdict = "MOVE";
     move = `Labor is ${money(heavyDollars)} heavy vs a ${raw.laborTargetPct.toFixed(0)}% floor. Cut one mid shift before the rush. Keep the peak window staffed.`;
+  } else if (heavyDollars < -25) {
+    move = `Labor is ${money(Math.abs(heavyDollars))} light vs target. Do not add a body from this screen.`;
   }
 
   const hold = raw.hasFoodEvidence
@@ -74,7 +76,9 @@ export function closeNight(raw: CloseInput): CloseResult {
     laborPct,
     targetPct: raw.laborTargetPct,
     heavyDollars,
-    heavyLine: `${money(heavyDollars)} heavy vs ${raw.laborTargetPct.toFixed(0)}%`,
+    heavyLine:
+      (heavyDollars >= 0 ? `${money(heavyDollars)} heavy` : `${money(Math.abs(heavyDollars))} light`) +
+      ` vs ${raw.laborTargetPct.toFixed(0)}%`,
     verdict,
     move,
     hold,

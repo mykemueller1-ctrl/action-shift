@@ -5,6 +5,7 @@ import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { hasHouseGmailEnv, isForbiddenName, isHouseInbox, runMorningIngest } from "../scripts/eod-lib.mjs";
+import { buildZReportPdf, extractPdfText } from "../scripts/pdf-text.mjs";
 
 const fixture = readFileSync(join("tests", "fixtures", "pdq-zreport.txt"), "utf8");
 
@@ -51,4 +52,51 @@ test("Void_Promo is forbidden and house Gmail env is off in git", () => {
   ]);
   assert.equal(close.netSales, undefined);
   assert.match(close.error ?? "", /Z-report Summary/i);
+});
+
+test("ingest-eod with no file does not write fixture dollars", () => {
+  const dir = mkdtempSync(join(tmpdir(), "eod-"));
+  const out = join(dir, "last-close.json");
+  writeFileSync(out, JSON.stringify({ house: "Community Tap", netSales: 99, laborDollars: 11 }));
+  const ran = spawnSync(process.execPath, ["scripts/ingest-eod.mjs"], {
+    env: { ...process.env, LAST_CLOSE_PATH: out },
+    encoding: "utf8",
+  });
+  assert.notEqual(ran.status, 0);
+  assert.match(ran.stderr, /Type the two numbers/i);
+  const kept = JSON.parse(readFileSync(out, "utf8"));
+  assert.equal(kept.netSales, 99);
+  assert.notEqual(kept.netSales, 3463.35);
+});
+
+test("Z-report PDF text layer yields Subtotal + Labor Summary Total", () => {
+  const plain = extractPdfText(buildZReportPdf(fixture));
+  const flate = extractPdfText(buildZReportPdf(fixture, { compress: true }));
+  for (const text of [plain, flate]) {
+    const close = runMorningIngest([{ filename: "9-8-2026 ZReport_Summary Community Pizza.pdf", text }]);
+    assert.equal(close.netSales, 3463.35);
+    assert.equal(close.laborDollars, 1324.41);
+    assert.equal(close.food, "HOLD");
+    assert.notEqual(close.netSales, 3615.83);
+  }
+});
+
+test("ingest-eod reads a dropped ZReport_Summary PDF", () => {
+  for (const compress of [false, true]) {
+    const dir = mkdtempSync(join(tmpdir(), "eod-"));
+    const pdf = join(dir, "9-8-2026 ZReport_Summary Community Pizza.pdf");
+    const out = join(dir, "last-close.json");
+    writeFileSync(pdf, buildZReportPdf(fixture, { compress }));
+    const ran = spawnSync(process.execPath, ["scripts/ingest-eod.mjs", pdf], {
+      env: { ...process.env, LAST_CLOSE_PATH: out },
+      encoding: "utf8",
+    });
+    assert.equal(ran.status, 0, ran.stderr);
+    const close = JSON.parse(readFileSync(out, "utf8"));
+    assert.equal(close.netSales, 3463.35);
+    assert.equal(close.laborDollars, 1324.41);
+    assert.equal(close.source, "ZReport_Summary");
+    assert.equal(close.food, "HOLD");
+    assert.equal(close.sentToManager, false);
+  }
 });

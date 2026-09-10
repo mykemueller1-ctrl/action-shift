@@ -75,6 +75,8 @@ test("June CTap Z-reports: 6/7 light HOLD, 6/8 MOVE, never Grand Total", () => {
   });
   assert.ok(light.heavyDollars < -25);
   assert.equal(light.verdict, "HOLD");
+  assert.match(light.heavyLine, /light/);
+  assert.match(light.move, /Do not add a body from this screen/);
   assert.equal(jun8?.netSales, 2725.76);
   assert.equal(jun8?.laborDollars, 1155.25);
   assert.notEqual(jun8?.netSales, 2842.54);
