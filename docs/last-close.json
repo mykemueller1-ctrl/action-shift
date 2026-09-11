@@ -6,11 +6,11 @@
   "netSales": 4456.18,
   "laborDollars": 1427.74,
   "laborPct": 32.04,
-  "heavyDollars": 160.61,
+  "heavyDollars": 180.01,
   "verdict": "MOVE",
   "food": "HOLD",
   "source": "ZReport_Summary",
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
   "sentToManager": false,
-  "ingestedAt": "2026-09-11T10:58:00Z"
+  "ingestedAt": "2026-09-11T13:37:00Z"
 }
