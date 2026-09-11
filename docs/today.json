@@ -4,21 +4,21 @@
   "inbox": "communitypizza2026@gmail.com",
   "timezone": "America/Chicago",
   "readyAfter": "08:00",
-  "businessDate": "9/9/2026",
-  "netSales": 4105.23,
-  "laborDollars": 1310.07,
+  "businessDate": "9/10/2026",
+  "netSales": 4456.18,
+  "laborDollars": 1427.74,
   "netLabel": "PDQ Subtotal (ex-tax)",
   "laborLabel": "Labor Summary Total",
-  "source": "House inbox · PDQ Z-report",
+  "source": "House inbox \u00b7 PDQ Z-report",
   "food": "HOLD",
   "mix": {
-    "food": 2408.14,
-    "pop": 154,
-    "liquor": 727.25,
-    "beer": 866.03,
-    "rolledIntoFood": ["Gift Card Sold", "Spec Instruction", "UKNOWN", "Large Pizzas"]
+    "food": 3073.16,
+    "pop": 140.25,
+    "liquor": 336.25,
+    "beer": 882.75,
+    "rolledIntoFood": ["Gift Card Sold", "Spec Instruction", "Smart Coupon", "UKNOWN", "Large Pizzas"]
   },
-  "pulledAt": "2026-09-10T09:11:00-05:00",
-  "messageId": "1a08af996e91f868",
-  "subject": "EOD Reports Generated From Community Pizza 515-955-8202 9/10/2026 6:00:06 AM"
+  "pulledAt": "2026-09-11T09:14:00-05:00",
+  "messageId": "1a0901e3a04b8012",
+  "subject": "EOD Reports Generated From Community Pizza 515-955-8202 9/11/2026 5:58:12 AM"
 }
