@@ -12,5 +12,5 @@
   "source": "ZReport_Summary",
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
   "sentToManager": false,
-  "ingestedAt": "2026-09-13T11:40:00Z"
+  "ingestedAt": "2026-09-13T13:36:00Z"
 }
