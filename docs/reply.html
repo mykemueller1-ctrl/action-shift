@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Action Shift · Write last</title>
+  <style>
+    :root { --paper:#f4efe6; --ink:#1a1714; --mute:#6b645b; --rule:#d9d0c3; --move:#8b1e1e; --hold:#8a6a12; --ok:#2c5a3c; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:Georgia,serif; }
+    main { max-width:760px; margin:0 auto; padding:2.25rem 1.15rem 5rem; }
+    h1 { font-size:42px; font-style:italic; font-weight:500; margin:0 0 .4rem; }
+    h2 { font-size:20px; font-weight:500; margin:1.6rem 0 .4rem; }
+    .eyebrow { letter-spacing:.16em; font-size:11px; text-transform:uppercase; }
+    .mute { color:var(--mute); max-width:560px; line-height:1.45; }
+    a { color:var(--ink); }
+    ol.steps { max-width:560px; padding-left:1.25rem; line-height:1.5; }
+    ol.steps li { margin:0.25rem 0; }
+    label { display:block; margin-top:12px; font-size:15px; }
+    input, textarea, button { font:inherit; }
+    input, textarea { display:block; width:100%; margin-top:6px; padding:10px 12px; border:1px solid var(--rule); background:#fff; }
+    button { margin-top:8px; margin-right:8px; padding:12px 16px; background:var(--ink); color:var(--paper); border:0; cursor:pointer; }
+    button.ghost { background:transparent; color:var(--ink); border:1px solid var(--rule); }
+    button:disabled { opacity:.45; cursor:not-allowed; }
+    .drop { margin-top:16px; padding:16px; border:1px dashed var(--rule); background:#fff; }
+    .fact { background:#fff; border:1px solid var(--rule); padding:12px 14px; margin-top:8px; }
+    .fact b { display:block; font-size:12px; letter-spacing:.08em; text-transform:uppercase; color:var(--mute); font-weight:500; }
+    .fact a { font-size:14px; }
+    pre { white-space:pre-wrap; background:#fff; padding:16px; margin-top:12px; border:1px solid var(--rule); }
+    .err { color:var(--move); min-height:1.2em; }
+    #out { display:none; margin-top:8px; }
+    .plats { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 0; }
+    .plats span { border:1px solid var(--rule); background:#fff; padding:6px 10px; font-size:13px; color:var(--mute); }
+  </style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">Never 86'd · Action Shift · Research first · <a href="index.html">Last night</a></p>
+  <h1>Write last.</h1>
+  <p class="mute">A content agent is a research pipeline with a writing step bolted on the end. The mistake is building the writing step first. This seat does not post. Human tap. No auto-send.</p>
+  <ol class="mute steps">
+    <li>What arrived? The inbound stays as it is.</li>
+    <li>What is true? Lock sourced facts. Mapping is labeled mapping.</li>
+    <li>Then write. If the lock is off, it refuses.</li>
+    <li>Copy. You send. Nothing leaves this page on its own.</li>
+  </ol>
+  <div class="plats" aria-label="This seat does not post">
+    <span>Email — this job</span>
+    <span>Instagram — later</span>
+    <span>TikTok — later</span>
+    <span>X — later</span>
+    <span>LinkedIn — later</span>
+  </div>
+
+  <h2>1. Inbound</h2>
+  <p class="mute">Stephanie, BJ Fogg’s team. Not the house inbox. Not Kenzy.</p>
+  <label>Paste the inbound
+    <textarea id="inbound" rows="12"></textarea>
+  </label>
+
+  <h2>2. Research</h2>
+  <p class="mute">Facts below are locked from the inbound plus BJ’s public pages. Training dollars stay in research. They do not go in the reply as a purchase.</p>
+  <div id="facts"></div>
+  <label class="mute" style="margin-top:14px"><input id="lock" type="checkbox" style="display:inline;width:auto" /> Facts are locked. Do not write first.</label>
+
+  <h2>3. Write</h2>
+  <button id="write">Write from research</button>
+  <p class="err" id="err"></p>
+
+  <section id="out">
+    <h2>4. Copy</h2>
+    <p class="eyebrow">Reply to Stephanie</p>
+    <pre id="reply"></pre>
+    <button type="button" id="copyreply">Copy reply</button>
+    <button class="ghost" type="button" id="mailreply">Open mail draft</button>
+    <p class="eyebrow" style="margin-top:22px">15-minute call card</p>
+    <pre id="card"></pre>
+    <button type="button" id="copycard">Copy call card</button>
+    <p class="eyebrow" style="margin-top:22px">Work brief</p>
+    <pre id="brief"></pre>
+    <button type="button" id="copybrief">Copy work brief</button>
+    <p class="mute" id="copied"></p>
+  </section>
+</main>
+<script>
+const WRITE_BEFORE_RESEARCH = "Writing before research produces slop. Lock the facts first.";
+const FOGG_SOURCES = {
+  learn: "https://www.bjfogg.com/learn",
+  model: "https://www.behaviormodel.org/",
+  call: "https://bjfogg.typeform.com/callwithBJFogg"
+};
+const FOGG_INBOUND = [
+  "Hello, Myke",
+  "",
+  "This is Stephanie, I work on BJ's team.",
+  "",
+  "Thanks for writing and for your interest in Dr. Fogg's work.",
+  "",
+  "BJ is booking these calls a few weeks out, typically on Wednesday mid-afternoon in Pacific time.",
+  "",
+  "Are you looking for training options in addition to discussing your work?",
+  "",
+  "With your reply, I can help guide next steps.",
+  "",
+  "Kind regards,",
+  "Stephanie"
+].join("\n");
+const FACTS = [
+  { id: "inbound-ask", kind: "inbound", source: "inbound email", claim: "Stephanie (BJ's team) asked if Myke wants training options in addition to discussing his work. BJ books a few weeks out, typically Wednesday mid-afternoon Pacific." },
+  { id: "fit-call", kind: "sourced", source: FOGG_SOURCES.call, claim: "BJ offers a free 15-minute call to help with what you are building and to decide if training is a fit. Stephanie follows up after the form." },
+  { id: "live-training", kind: "sourced", source: FOGG_SOURCES.learn, claim: "Live Fogg Behavior Design Training is 6 interactive Zoom sessions with BJ. Tuition is $4,000 and includes monthly office hours after the training ends." },
+  { id: "online-course", kind: "sourced", source: FOGG_SOURCES.learn, claim: "Self-paced online course is $299: 8 modules, 75 short videos, worksheets, 6 months of access, monthly office hours." },
+  { id: "not-coach-cert", kind: "sourced", source: FOGG_SOURCES.learn, claim: "Tiny Habits coach certification is a different program on a different site. BJ's Behavior Design training is not that certification." },
+  { id: "b-map", kind: "sourced", source: FOGG_SOURCES.model, claim: "Behavior happens when Motivation, Ability, and a Prompt come together at the same time. When a behavior does not occur, at least one of those three elements is missing." },
+  { id: "seat", kind: "seat", source: "this seat", claim: "Action Shift owner seat: Community Tap, one manager, labor target 28%. Net = PDQ Subtotal. Labor = Labor Summary Total. Food HOLD unless same-day invoices AND a count. Human taps Send. No auto-send." },
+  { id: "map-loop", kind: "mapping", source: "this seat × Fogg Behavior Model", claim: "Mapping, not Fogg's words: Prompt = the PDQ EOD already arrived / desk after 8:05. Ability = two numbers, three tiles, one tap. Motivation = last night's leak, one manager. Tiny behavior = send one text." }
+];
+const REPLY = [
+  "Stephanie,",
+  "",
+  "Thank you. Yes — I want the 15 minutes to discuss the work.",
+  "",
+  "What I built: Action Shift. One morning habit for a restaurant owner. After 8:05, last night's two numbers are already on the desk (net + labor). Three tiles. One MOVE or HOLD. One text to one manager. Food stays HOLD until there is a same-day count. That loop is the product.",
+  "",
+  "I am not buying training in this email. If BJ looks at the work and says the Behavior Design training would sharpen it, I will listen on the call.",
+  "",
+  "Wednesday mid-afternoon Pacific works. I can take the next open Wednesday you have.",
+  "",
+  "Myke Mueller",
+  "Never86'd · Community Tap & Pizza, Fort Dodge, Iowa"
+].join("\n");
+const CARD = [
+  "15 minutes. Wednesday mid-afternoon Pacific.",
+  "",
+  "1. The behavior: owner opens the desk after 8:05. Two numbers. One send.",
+  "2. Fogg: Behavior = Motivation + Ability + Prompt at the same moment.",
+  "   Prompt = the EOD already arrived.",
+  "   Ability = two fields, three tiles, one tap.",
+  "   Motivation = last night's leak, one manager.",
+  "3. What I will not do: invent food cost, ask who is on the floor, send the manager without a tap, mix another house's dollars.",
+  "4. Ask BJ: is this a real Behavior Design product, or am I missing a piece?"
+].join("\n");
+const BRIEF = [
+  "Action Shift is an owner seat, not an operating system.",
+  "",
+  "Loop:",
+  "- Last night arrives (PDQ EOD).",
+  "- After 8:05 the desk has net + labor.",
+  "- Close math. One MOVE or HOLD.",
+  "- One text. Human tap.",
+  "- Tomorrow's file proves whether the move landed.",
+  "",
+  "Community Tap. Fort Dodge. Labor target 28%. Food HOLD.",
+  "",
+  "Tiny Habits for a restaurant close: make the behavior tiny, anchor it to a prompt that already exists, do not add a dashboard."
+].join("\n");
+
+function $(id) { return document.getElementById(id); }
+$("inbound").value = FOGG_INBOUND;
+$("facts").innerHTML = FACTS.map(function (f) {
+  const src = /^https?:/.test(f.source)
+    ? '<a href="' + f.source + '" target="_blank" rel="noreferrer">' + f.source.replace(/^https?:\/\//, "") + "</a>"
+    : f.source;
+  return '<article class="fact"><b>' + f.kind + "</b><p>" + f.claim + '</p><p class="mute">' + src + "</p></article>";
+}).join("");
+
+function writeFromResearch(locked) {
+  if (!locked) throw new Error(WRITE_BEFORE_RESEARCH);
+  return { reply: REPLY, callCard: CARD, workBrief: BRIEF };
+}
+
+$("write").onclick = function () {
+  $("err").textContent = "";
+  $("copied").textContent = "";
+  try {
+    const draft = writeFromResearch($("lock").checked);
+    $("reply").textContent = draft.reply;
+    $("card").textContent = draft.callCard;
+    $("brief").textContent = draft.workBrief;
+    $("out").style.display = "block";
+  } catch (e) {
+    $("out").style.display = "none";
+    $("err").textContent = e.message || WRITE_BEFORE_RESEARCH;
+  }
+};
+
+async function copy(text, label, btn) {
+  await navigator.clipboard.writeText(text);
+  const prior = btn.textContent;
+  btn.textContent = "Copied";
+  $("copied").textContent = "Copied — paste it yourself. Nothing was sent.";
+  setTimeout(function () { btn.textContent = prior; }, 1600);
+}
+$("copyreply").onclick = function () { copy($("reply").textContent, "reply", $("copyreply")); };
+$("copycard").onclick = function () { copy($("card").textContent, "card", $("copycard")); };
+$("copybrief").onclick = function () { copy($("brief").textContent, "brief", $("copybrief")); };
+$("mailreply").onclick = function () {
+  const subject = encodeURIComponent("Re: call with BJ — discuss the work");
+  window.location.href = "mailto:?subject=" + subject + "&body=" + encodeURIComponent($("reply").textContent);
+};
+</script>
+</body>
+</html>
