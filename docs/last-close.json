@@ -2,15 +2,15 @@
   "house": "Community Tap",
   "manager": "Kenzy",
   "laborTargetPct": 28,
-  "businessDate": "9/12/2026",
-  "netSales": 6668.71,
-  "laborDollars": 1967.45,
-  "laborPct": 29.5,
-  "heavyDollars": 100.21,
-  "verdict": "MOVE",
+  "businessDate": "9/13/2026",
+  "netSales": 7461.14,
+  "laborDollars": 1618.76,
+  "laborPct": 21.7,
+  "heavyDollars": -470.36,
+  "verdict": "HOLD",
   "food": "HOLD",
   "source": "ZReport_Summary",
+  "ingestedAt": "2026-09-14T12:33:00Z",
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
-  "sentToManager": false,
-  "ingestedAt": "2026-09-13T13:36:00Z"
+  "sentToManager": false
 }
