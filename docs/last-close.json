@@ -10,7 +10,7 @@
   "verdict": "MOVE",
   "food": "HOLD",
   "source": "ZReport_Summary",
-  "ingestedAt": "2026-09-16T11:43:00Z",
+  "ingestedAt": "2026-09-16T13:40:00Z",
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
   "sentToManager": false
 }
