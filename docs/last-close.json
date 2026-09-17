@@ -10,7 +10,8 @@
   "verdict": "MOVE",
   "food": "HOLD",
   "source": "ZReport_Summary",
-  "ingestedAt": "2026-09-17T11:08:00Z",
+  "ingestedAt": "2026-09-17T13:40:00Z",
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
-  "sentToManager": false
+  "sentToManager": false,
+  "timeClock": "MISSING — no Historical/Payroll/Time Clock PDF in same-day PDQ EOD mail; punches not invented"
 }
