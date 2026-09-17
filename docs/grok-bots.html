@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Action Shift · Grok Bot templates</title>
+  <style>
+    :root { --paper:#f4efe6; --ink:#1a1714; --mute:#6b645b; --rule:#d9d0c3; --move:#8b1e1e; --hold:#8a6a12; --ok:#2c5a3c; }
+    * { box-sizing: border-box; }
+    body { margin:0; background:var(--paper); color:var(--ink); font-family:Georgia,serif; }
+    main { max-width:760px; margin:0 auto; padding:2.25rem 1.15rem 5rem; }
+    h1 { font-size:42px; font-style:italic; font-weight:500; margin:0 0 .4rem; }
+    h2 { font-size:22px; font-weight:500; margin:0 0 .35rem; }
+    .eyebrow { letter-spacing:.16em; font-size:11px; text-transform:uppercase; }
+    .mute { color:var(--mute); max-width:560px; line-height:1.45; }
+    ol.steps { max-width:560px; padding-left:1.25rem; line-height:1.5; }
+    ol.steps li { margin:0.25rem 0; }
+    a { color:var(--ink); }
+    button { font:inherit; margin-top:8px; margin-right:8px; padding:12px 16px; background:var(--ink); color:var(--paper); border:0; cursor:pointer; }
+    button.ghost { background:transparent; color:var(--ink); border:1px solid var(--rule); }
+    .card { background:#fff; border:1px solid var(--rule); padding:16px 16px 14px; margin:16px 0; }
+    .card p { margin:0.4rem 0 0; line-height:1.45; }
+    pre { white-space:pre-wrap; background:#fff; padding:16px; margin-top:12px; border:1px solid var(--rule); display:none; max-height:280px; overflow:auto; }
+    .err { color:var(--move); min-height:1.2em; }
+    .ok { color:var(--ok); }
+    .bar { border-left:3px solid var(--hold); padding-left:12px; margin:18px 0; }
+  </style>
+</head>
+<body>
+<main>
+  <p class="eyebrow">Never 86'd · Action Shift · Grok Bots</p>
+  <h1>Six templates.</h1>
+  <p class="mute">Made from this desk. The quality bar is the invoices bot: one job, paste the evidence, label every dollar VERIFIED / ESTIMATED / MISSING, never invent, name the next action, you tap send.</p>
+  <p class="mute bar">Live model: <a href="https://grokbots.best/bots/two-invoice-catcher">Two Invoice Catcher</a> on grokbots.best. This page cannot publish to grok.com. Paste the first message. Share as template.</p>
+  <ol class="mute steps">
+    <li>grok.com → New → Create new agent.</li>
+    <li>Paste the first message from a card. That is the bot.</li>
+    <li>Edit Profile: paste the one-line description.</li>
+    <li>Share as template → Public → copy the x.ai link.</li>
+    <li>A stranger uses their own files. Not the house inbox.</li>
+  </ol>
+  <p class="mute">Owner desk stays <a href="index.html">Last night.</a> CTap / Kenzy / 28% / food HOLD.</p>
+  <p class="err" id="err"></p>
+  <div id="list"></div>
+</main>
+<script>
+const $ = (id) => document.getElementById(id);
+function setErr(msg) { $("err").textContent = msg || ""; }
+async function copyText(text, btn, ok) {
+  try {
+    await navigator.clipboard.writeText(text);
+    const prev = btn.textContent;
+    btn.textContent = ok;
+    setTimeout(() => { btn.textContent = prev; }, 1600);
+  } catch (e) {
+    setErr("Copy failed. Select the first message and copy it yourself.");
+  }
+}
+async function loadRoster() {
+  const res = await fetch("grok-bots/roster.json");
+  if (!res.ok) throw new Error("roster");
+  return res.json();
+}
+async function loadFirst(slug) {
+  const res = await fetch("grok-bots/" + slug + ".md");
+  if (!res.ok) throw new Error(slug);
+  return res.text();
+}
+async function paint() {
+  let roster;
+  try {
+    roster = await loadRoster();
+  } catch (e) {
+    setErr("Could not load roster.json. Open this page from the docs site, not as a raw download.");
+    return;
+  }
+  const list = $("list");
+  list.innerHTML = "";
+  roster.bots.forEach((bot, i) => {
+    const card = document.createElement("article");
+    card.className = "card";
+    card.id = bot.slug;
+    const n = String(i + 1).padStart(2, "0");
+    card.innerHTML =
+      '<p class="eyebrow">' + n + " · " + bot.slug + "</p>" +
+      "<h2>" + bot.name + "</h2>" +
+      '<p class="mute">' + bot.job + "</p>" +
+      "<p>" + bot.description + "</p>" +
+      '<button type="button" data-copy="first">Copy first message</button>' +
+      '<button class="ghost" type="button" data-copy="desc">Copy description</button>' +
+      '<button class="ghost" type="button" data-toggle="1">Show first message</button>' +
+      "<pre></pre>";
+    const pre = card.querySelector("pre");
+    const firstBtn = card.querySelector('[data-copy="first"]');
+    const descBtn = card.querySelector('[data-copy="desc"]');
+    const toggle = card.querySelector("[data-toggle]");
+    firstBtn.addEventListener("click", async () => {
+      try {
+        const text = await loadFirst(bot.slug);
+        pre.textContent = text;
+        await copyText(text, firstBtn, "Copied — paste into Grok");
+      } catch (e) {
+        setErr("Could not load " + bot.slug + ".md");
+      }
+    });
+    descBtn.addEventListener("click", () => copyText(bot.description, descBtn, "Copied description"));
+    toggle.addEventListener("click", async () => {
+      if (pre.style.display === "block") {
+        pre.style.display = "none";
+        toggle.textContent = "Show first message";
+        return;
+      }
+      try {
+        pre.textContent = await loadFirst(bot.slug);
+        pre.style.display = "block";
+        toggle.textContent = "Hide first message";
+      } catch (e) {
+        setErr("Could not load " + bot.slug + ".md");
+      }
+    });
+    list.appendChild(card);
+  });
+}
+paint();
+</script>
+</body>
+</html>

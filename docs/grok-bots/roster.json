@@ -1,0 +1,43 @@
+{
+  "title": "Action Shift · Grok Bot templates",
+  "bar": "Two Invoice Catcher",
+  "live": "https://grokbots.best/bots/two-invoice-catcher",
+  "bots": [
+    {
+      "slug": "two-invoice-catcher",
+      "name": "Two Invoice Catcher",
+      "description": "Paste two vendor invoices. Catch price moves with Verified / Estimated / Missing labels. Never invents dollars. Names the next action before the truck. Free for independent operators.",
+      "job": "Catch vendor price moves before the truck."
+    },
+    {
+      "slug": "last-night-close",
+      "name": "Last Night Close",
+      "description": "Paste last night's net and labor. One labor % vs the house target. One MOVE, HOLD, or CLEAN. Food stays HOLD. Drafts one manager text. You send it. Never invents food cost. Never asks for a schedule.",
+      "job": "Close last night. One number. One text."
+    },
+    {
+      "slug": "z-report-catcher",
+      "name": "Z-Report Catcher",
+      "description": "Paste a Z-report Summary. Net is Subtotal, never Grand Total. Labor is Labor Summary Total. Labels Verified or Missing. Ignores Void/Promo and photos. Does not close the night.",
+      "job": "Pull Subtotal + Labor Summary Total. Stop."
+    },
+    {
+      "slug": "food-gate",
+      "name": "Food Gate",
+      "description": "Same-day invoices AND a count, or food stays HOLD. Invoice day is not daily prime. Complements Two Invoice Catcher. Never invents food cost.",
+      "job": "Open the food tile only when both keys exist."
+    },
+    {
+      "slug": "third-party-take",
+      "name": "Third-Party Take",
+      "description": "Paste one delivery-app statement. Eligible sales are Subtotal. Marketing is a choice, not a hidden fee. Verified / Estimated / Missing. Never invents the take.",
+      "job": "Read the delivery take. Do not bury ads."
+    },
+    {
+      "slug": "night-proof",
+      "name": "Night Proof",
+      "description": "Did yesterday's move happen? A yes is not done. Accepts deposit, receipt, time-clock, ticket, or exception proof. Carry the open move forward. Never asks who worked the rush.",
+      "job": "Proof the move. A yes is not done."
+    }
+  ]
+}

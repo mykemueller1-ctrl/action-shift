@@ -25,6 +25,16 @@ Optional: paste a DoorDash statement. Eligible = Subtotal. Marketing is called o
 
 Photos of Z-outs do not parse in this desk. Type or paste the two numbers.
 
+## Grok Bot templates
+
+Six paste-ready bots, same rules as the desk. Quality bar is Two Invoice Catcher.
+
+- Gallery: `docs/grok-bots.html`
+- First messages: `docs/grok-bots/*.md`
+- Live invoices bot: https://grokbots.best/bots/two-invoice-catcher
+
+This repo cannot publish to grok.com. Paste the first message, then Share as template.
+
 ## Stack tonight
 
 - Static HTML in `docs/` (the product)
