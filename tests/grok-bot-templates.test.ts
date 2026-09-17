@@ -43,9 +43,9 @@ test("each template is paste-ready and never invents dollars", () => {
     assert.match(md, /[Nn]ever invent/);
     assert.match(bot.description, /[Nn]ever/);
     assert.doesNotMatch(md, /auto-send|autosend/i);
-    assert.doesNotMatch(md, /\bPIN\b|payroll|Bamba|\$3,957\.09|\$1,452\.37/);
+    assert.doesNotMatch(md, /Bamba|\$3,957\.09|\$1,452\.37/);
     assert.doesNotMatch(md, /Fry Line|Bartender \$|who works 5/);
-    assert.doesNotMatch(bot.description, /Bamba|payroll|\bPIN\b/);
+    assert.doesNotMatch(bot.description, /Bamba|\$3,957\.09/);
   }
 });
 

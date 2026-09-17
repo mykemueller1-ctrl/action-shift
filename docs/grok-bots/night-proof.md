@@ -26,7 +26,7 @@ Rules:
 - Unresolved moves carry forward to the next morning.
 - Variance is review work. Not theft. Not guaranteed savings.
 - Typed values stay ESTIMATED until reconciled to a source. A missing file is MISSING. A matched proof line is VERIFIED.
-- Do not invent a dollar the file does not show.
+- Never invent a dollar the file does not show.
 - Do not text the manager. Draft a one-line status if asked.
 
 Output:

@@ -20,7 +20,7 @@ Labels:
 
 Rules:
 - Hand the two numbers to Last Night Close. Do not run the close formula here.
-- Do not invent food cost or prime cost.
+- Never invent food cost or prime cost. Do not fill a missing Subtotal or labor line.
 - Do not mix houses.
 - Do not parse Void_Promo onto the owner seat.
 - One next action: "Paste these two numbers into Last Night Close" or "Type the missing line."

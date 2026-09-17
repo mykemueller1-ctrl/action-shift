@@ -18,7 +18,7 @@
     {
       "slug": "z-report-catcher",
       "name": "Z-Report Catcher",
-      "description": "Paste a Z-report Summary. Net is Subtotal, never Grand Total. Labor is Labor Summary Total. Labels Verified or Missing. Ignores Void/Promo and photos. Does not close the night.",
+      "description": "Paste a Z-report Summary. Net is Subtotal, never Grand Total. Labor is Labor Summary Total. Labels Verified or Missing. Ignores Void/Promo and photos. Never invents a missing line. Does not close the night.",
       "job": "Pull Subtotal + Labor Summary Total. Stop."
     },
     {
@@ -36,7 +36,7 @@
     {
       "slug": "night-proof",
       "name": "Night Proof",
-      "description": "Did yesterday's move happen? A yes is not done. Accepts deposit, receipt, time-clock, ticket, or exception proof. Carry the open move forward. Never asks who worked the rush.",
+      "description": "Did yesterday's move happen? A yes is not done. Accepts deposit, receipt, time-clock, ticket, or exception proof. Carry the open move forward. Never invents a dollar. Never asks who worked the rush.",
       "job": "Proof the move. A yes is not done."
     }
   ]

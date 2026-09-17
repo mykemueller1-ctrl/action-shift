@@ -47,14 +47,35 @@
 const $ = (id) => document.getElementById(id);
 function setErr(msg) { $("err").textContent = msg || ""; }
 async function copyText(text, btn, ok) {
-  try {
-    await navigator.clipboard.writeText(text);
+  let copied = false;
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    try {
+      await navigator.clipboard.writeText(text);
+      copied = true;
+    } catch (e) {
+      copied = false;
+    }
+  }
+  if (!copied) {
+    const hold = document.createElement("textarea");
+    hold.value = text;
+    hold.setAttribute("readonly", "");
+    hold.style.position = "fixed";
+    hold.style.left = "-9999px";
+    document.body.appendChild(hold);
+    hold.select();
+    try { copied = document.execCommand("copy"); } catch (e) { copied = false; }
+    document.body.removeChild(hold);
+  }
+  if (copied) {
     const prev = btn.textContent;
     btn.textContent = ok;
     setTimeout(() => { btn.textContent = prev; }, 1600);
-  } catch (e) {
-    setErr("Copy failed. Select the first message and copy it yourself.");
+    setErr("");
+  } else {
+    setErr("Copy blocked. The first message is on screen — select it and copy.");
   }
+  return copied;
 }
 async function loadRoster() {
   const res = await fetch("grok-bots/roster.json");
@@ -98,6 +119,8 @@ async function paint() {
       try {
         const text = await loadFirst(bot.slug);
         pre.textContent = text;
+        pre.style.display = "block";
+        toggle.textContent = "Hide first message";
         await copyText(text, firstBtn, "Copied — paste into Grok");
       } catch (e) {
         setErr("Could not load " + bot.slug + ".md");
