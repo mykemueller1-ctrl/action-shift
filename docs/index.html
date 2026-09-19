@@ -19,6 +19,7 @@
     input, textarea { display:block; width:100%; margin-top:6px; padding:10px 12px; border:1px solid var(--rule); background:#fff; }
     button { margin-top:8px; margin-right:8px; padding:12px 16px; background:var(--ink); color:var(--paper); border:0; cursor:pointer; }
     button.ghost { background:transparent; color:var(--ink); border:1px solid var(--rule); }
+    a { color:var(--ink); }
     .drop { margin-top:16px; padding:16px; border:1px dashed var(--rule); background:#fff; }
     .tiles { display:grid; grid-template-columns:1fr; gap:10px; margin:20px 0; }
     @media (min-width:640px) { .tiles { grid-template-columns:1fr 1fr 1fr; } }
@@ -116,6 +117,7 @@
       <button class="ghost" type="button" id="prooffail">Fix failed</button>
     </div>
   </section>
+  <p class="mute" style="margin-top:48px">Grok Bot templates from this loop (invoices first): <a href="grok-bots.html">Six templates</a>.</p>
 </main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script>
