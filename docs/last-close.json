@@ -10,8 +10,8 @@
   "verdict": "HOLD",
   "food": "HOLD",
   "source": "ZReport_Summary",
-  "ingestedAt": "2026-09-22T11:49:00Z",
+  "ingestedAt": "2026-09-22T14:10:00Z",
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
   "sentToManager": false,
-  "timeClock": "EOD packet 9/21/2026: ZReport_Summary only. No Historical_Time_Clock attachment. Punches not invented. Wage rates not stored. Prior punch note not updated."
+  "timeClock": "Same-day mail has a forwarded Historical_Time_Clock for 9/6-9/19 only. No 9/21 punch in/out on that file. Punches not invented. Wage rates not stored. Mid-cut MOVE from last-move.json is prior-window proof, not this close."
 }
