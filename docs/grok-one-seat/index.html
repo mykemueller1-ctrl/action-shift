@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Never86'd — One Seat</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="top">
+    <div class="brand">
+      <span class="wordmark">NEVER86'D</span>
+      <span class="pipe">|</span>
+      <span class="seat-label">ONE SEAT</span>
+    </div>
+    <nav>
+      <button type="button" data-go="home">Home</button>
+      <button type="button" data-go="desk">Desk</button>
+      <button type="button" data-go="invoice">Invoices</button>
+      <button type="button" data-go="labor">Labor</button>
+      <button type="button" data-go="plate">Plate</button>
+    </nav>
+  </header>
+  <main>
+    <section id="view-home" class="view on">
+      <p class="eyebrow">A second set of eyes for your restaurant</p>
+      <h1>You run the restaurant.<br /><em>Let’s watch the costs.</em></h1>
+      <p class="lede">Pick one thing to check. Bring the paperwork you already have. Sample dollars stay labeled SAMPLE until you type your own.</p>
+      <p class="free">Your first owner seat is free · No card · No POS to start</p>
+      <div class="grid-home">
+        <article class="card dark">
+          <p class="kicker">Start with an invoice</p>
+          <h2>Same order. Higher prices?</h2>
+          <p>Add two invoices from the same vendor. Only have one? Start there. Missing stays Missing — not $0.</p>
+          <div class="sample-row">
+            <div><span class="tiny">Previous · SAMPLE</span><strong>$48.00</strong></div>
+            <span class="arrow">→</span>
+            <div><span class="tiny">Latest · SAMPLE</span><strong>$56.00</strong></div>
+            <div class="chip">+$8.00 / case</div>
+          </div>
+          <button class="btn primary" type="button" data-go="invoice">Check my invoices</button>
+        </article>
+        <article class="card">
+          <p class="kicker">Labor hours</p>
+          <h2>Did the hours go over the plan?</h2>
+          <p>Schedule hours + time-clock hours. Formula stays on the card.</p>
+          <button class="btn ghost" type="button" data-go="labor">Check my labor</button>
+        </article>
+        <article class="card">
+          <p class="kicker">One menu item</p>
+          <h2>What does this plate really cost?</h2>
+          <p>Recipe lines + ingredient prices you type. Incomplete recipe stays Missing.</p>
+          <button class="btn ghost" type="button" data-go="plate">Check my plate cost</button>
+        </article>
+      </div>
+    </section>
+    <section id="view-desk" class="view">
+      <p class="eyebrow">Owner desk · one restaurant</p>
+      <h1>What needs your attention?</h1>
+      <p class="lede" id="desk-status">No live papers on this seat. Sample mozzarella is loaded so you can walk the loop.</p>
+      <div class="status-row" id="desk-badges"></div>
+      <article class="card dark wide" id="desk-move"></article>
+      <div class="actions">
+        <button class="btn primary" type="button" data-go="invoice">Run invoice check</button>
+        <button class="btn ghost" type="button" id="clear-local">Clear typed numbers</button>
+      </div>
+    </section>
+    <section id="view-invoice" class="view">
+      <p class="eyebrow">Invoice check</p>
+      <h1>Same SKU. Same pack. Different price?</h1>
+      <p class="lede">Type two case prices. Leave a field blank and the row stays Missing. Sample is mozzarella 20 lb.</p>
+      <form id="invoice-form" class="card">
+        <label>Item <input name="item" value="Mozzarella 20 lb case" /></label>
+        <div class="two">
+          <label>Previous price ($) <input name="prev" type="number" step="0.01" min="0" value="48" /></label>
+          <label>Latest price ($) <input name="latest" type="number" step="0.01" min="0" value="56" /></label>
+        </div>
+        <div class="two">
+          <label>Pack size <input name="pack" value="20 lb" /></label>
+          <label>Cases you usually buy <input name="cases" type="number" step="1" min="0" value="10" /></label>
+        </div>
+        <label class="check"><input name="sample" type="checkbox" checked /> These are SAMPLE numbers, not my vendor invoice</label>
+        <button class="btn primary" type="submit">Prove the math</button>
+      </form>
+      <article class="card dark wide" id="invoice-out"></article>
+    </section>
+    <section id="view-labor" class="view">
+      <p class="eyebrow">Labor check</p>
+      <h1>Hours vs the plan</h1>
+      <p class="lede">Labor % = labor dollars ÷ net sales. Missing sales or missing clock hours stay Missing. Do not annualize a partial day.</p>
+      <form id="labor-form" class="card">
+        <div class="two">
+          <label>Scheduled hours <input name="sched" type="number" step="0.1" min="0" /></label>
+          <label>Clocked hours <input name="clock" type="number" step="0.1" min="0" /></label>
+        </div>
+        <div class="two">
+          <label>Labor dollars ($) <input name="labor$" type="number" step="0.01" min="0" /></label>
+          <label>Net sales ($) <input name="sales" type="number" step="0.01" min="0" /></label>
+        </div>
+        <label>Target labor % <input name="target" type="number" step="0.1" min="0" placeholder="Your target. Blank = Missing." /></label>
+        <label class="check"><input name="sample" type="checkbox" /> These are SAMPLE numbers</label>
+        <button class="btn primary" type="submit">Prove the math</button>
+      </form>
+      <article class="card dark wide" id="labor-out"></article>
+    </section>
+    <section id="view-plate" class="view">
+      <p class="eyebrow">Plate check</p>
+      <h1>What does this plate cost?</h1>
+      <p class="lede">Ingredient cost only. Labor and overhead stay off this card unless you add them as their own lines. A blank price is Missing, not $0.</p>
+      <form id="plate-form" class="card">
+        <label>Menu item <input name="name" value="Sample plate" /></label>
+        <label>Menu price ($) <input name="menu" type="number" step="0.01" min="0" value="16" /></label>
+        <div id="lines"></div>
+        <button class="btn ghost" type="button" id="add-line">Add ingredient line</button>
+        <label class="check"><input name="sample" type="checkbox" checked /> These are SAMPLE numbers</label>
+        <button class="btn primary" type="submit">Prove the math</button>
+      </form>
+      <article class="card dark wide" id="plate-out"></article>
+    </section>
+  </main>
+  <footer>Built for the operator wearing every hat. Fact → why it matters → owner → one next action → $ at stake → evidence status. Grok/X first. No invented dollars.</footer>
+  <script src="app.js"></script>
+</body>
+</html>
