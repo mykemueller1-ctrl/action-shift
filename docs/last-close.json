@@ -2,16 +2,16 @@
   "house": "Community Tap",
   "manager": "Kenzy",
   "laborTargetPct": 28,
-  "businessDate": "9/21/2026",
-  "netSales": 3573.23,
-  "laborDollars": 1005.68,
-  "laborPct": 28.15,
-  "heavyDollars": 5.18,
+  "businessDate": "9/22/2026",
+  "netSales": 4886.97,
+  "laborDollars": 1351.04,
+  "laborPct": 27.65,
+  "heavyDollars": -17.31,
   "verdict": "HOLD",
   "food": "HOLD",
   "source": "ZReport_Summary",
-  "ingestedAt": "2026-09-22T14:10:00Z",
+  "ingestedAt": "2026-09-23T11:35:00Z",
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
   "sentToManager": false,
-  "timeClock": "Same-day mail has a forwarded Historical_Time_Clock for 9/6-9/19 only. No 9/21 punch in/out on that file. Punches not invented. Wage rates not stored. Mid-cut MOVE from last-move.json is prior-window proof, not this close."
+  "timeClock": "EOD mail only. No Historical Time_Clock attachment. Punches not invented. Wage rates not stored. last-move proof not updated."
 }
