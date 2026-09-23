@@ -10,8 +10,8 @@
   "verdict": "HOLD",
   "food": "HOLD",
   "source": "ZReport_Summary",
-  "ingestedAt": "2026-09-23T11:35:00Z",
+  "ingestedAt": "2026-09-23T14:17:00Z",
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
   "sentToManager": false,
-  "timeClock": "EOD mail only. No Historical Time_Clock attachment. Punches not invented. Wage rates not stored. last-move proof not updated."
+  "timeClock": "EOD mail 9/23 only. No same-day Historical/Payroll/Time Clock PDF. Punches not invented. Wage rates not stored. last-move proof not updated."
 }
