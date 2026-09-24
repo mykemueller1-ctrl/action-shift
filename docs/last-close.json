@@ -2,16 +2,16 @@
   "house": "Community Tap",
   "manager": "Kenzy",
   "laborTargetPct": 28,
-  "businessDate": "9/22/2026",
-  "netSales": 4886.97,
-  "laborDollars": 1351.04,
-  "laborPct": 27.65,
-  "heavyDollars": -17.31,
+  "businessDate": "9/23/2026",
+  "netSales": 4390.77,
+  "laborDollars": 1329.64,
+  "laborPct": 30.28,
+  "heavyDollars": 100.22,
   "verdict": "HOLD",
   "food": "HOLD",
   "source": "ZReport_Summary",
-  "ingestedAt": "2026-09-23T14:17:00Z",
+  "ingestedAt": "2026-09-24T10:58:00Z",
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
   "sentToManager": false,
-  "timeClock": "EOD mail 9/23 only. No same-day Historical/Payroll/Time Clock PDF. Punches not invented. Wage rates not stored. last-move proof not updated."
+  "timeClock": "EOD mail 9/24 only. No same-day Historical/Payroll/Time Clock PDF. Punches not invented. Wage rates not stored. last-move proof not updated."
 }
