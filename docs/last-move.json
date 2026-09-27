@@ -8,5 +8,5 @@
   "claimBoundary": "Typed values stay Unverified until reconciled to a source. Variance is review work. Not theft. Not guaranteed savings.",
   "evidenceStatus": "verified",
   "proofKind": "time-clock export",
-  "proofNote": "PDQ Historical Time Clock 9/6/2026-9/12/2026 Community Pizza. Filename is Time_Clock; file contains punch in/out rows (no SSNs). On 9/8 at least two mid punches clocked out before 4pm; peak 5-8pm was staffed by multiple punches in from about 3:56pm-5:13pm. Mid cut before rush, peak kept staffed. Wage rates and payroll pay not stored."
+  "proofNote": "PDQ Historical Time Clock 9/6/2026-9/19/2026 Community Pizza. Filename is Historical_Time_Clock; file contains punch in/out rows (no SSNs stored). Across the window, midday punches clock out before 4pm on multiple days while 5-8pm stays covered by several clock-ins from about 3:30pm-5:15pm. Mid cut before rush vs peak staffed is visible in punches. Wage rates and payroll pay not stored."
 }
