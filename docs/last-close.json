@@ -10,8 +10,8 @@
   "verdict": "MOVE",
   "food": "HOLD",
   "source": "ZReport_Summary",
-  "ingestedAt": "2026-09-29T08:18:00Z",
+  "ingestedAt": "2026-09-29T13:10:00Z",
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
   "sentToManager": false,
-  "timeClock": "Filename proof only: 9-20-2026 to 9-26-2026 Historical_Time_Clock_Report arrived 9/27 6:32 PM CDT. last-move.json refreshed 63e7a8d. No PDF/SSNs/wage rates in git. Punches not invented. Menu_Sales historicals ignored."
+  "timeClock": "No Historical/Payroll/Time Clock PDF in same-day (9/29) EOD mail. Last historical filename proof only: 9-20-2026 to 9-26-2026 Historical_Time_Clock_Report arrived 9/27 6:32 PM CDT. Punches not invented. No PDF/SSNs/wage rates in git. Void_Promo and Hourly ignored."
 }
