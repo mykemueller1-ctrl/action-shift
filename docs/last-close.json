@@ -2,16 +2,16 @@
   "house": "Community Tap",
   "manager": "Kenzy",
   "laborTargetPct": 28,
-  "businessDate": "9/28/2026",
-  "netSales": 2895.98,
-  "laborDollars": 1111.59,
-  "laborPct": 38.38,
-  "heavyDollars": 300.72,
+  "businessDate": "9/29/2026",
+  "netSales": 4332.49,
+  "laborDollars": 1411.42,
+  "laborPct": 32.58,
+  "heavyDollars": 198.32,
   "verdict": "MOVE",
   "food": "HOLD",
   "source": "ZReport_Summary",
-  "ingestedAt": "2026-09-29T13:10:00Z",
+  "ingestedAt": "2026-09-30T11:03:00Z",
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
   "sentToManager": false,
-  "timeClock": "No Historical/Payroll/Time Clock PDF in same-day (9/29) EOD mail. Last historical filename proof only: 9-20-2026 to 9-26-2026 Historical_Time_Clock_Report arrived 9/27 6:32 PM CDT. Punches not invented. No PDF/SSNs/wage rates in git. Void_Promo and Hourly ignored."
+  "timeClock": "No Historical/Payroll/Time Clock PDF in this EOD mail (9/30 6:03 AM CDT). Attachments were ZReport_Summary and Void_Promo only. Void_Promo ignored. Punches not invented. No PDF/SSNs/wage rates in git. Last historical filename proof only: 9-20-2026 to 9-26-2026 Historical_Time_Clock_Report arrived 9/27 6:32 PM CDT."
 }
