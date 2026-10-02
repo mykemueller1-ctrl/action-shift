@@ -10,8 +10,8 @@
   "verdict": "MOVE",
   "food": "HOLD",
   "source": "ZReport_Summary",
-  "ingestedAt": "2026-10-02T10:50:00Z",
+  "ingestedAt": "2026-10-02T13:10:00Z",
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
   "sentToManager": false,
-  "timeClock": "EOD mail 10/2 5:50 AM CDT only. Business date 10/1/2026. Attachments: ZReport_Summary, Void_Promo, Hourly_Sales. Void_Promo ignored. Hourly ignored. No Historical/Payroll/Time Clock PDF. Punches not invented. No SSNs or wage rates in git. Last historical filename proof only: 9-20-2026 to 9-26-2026 Historical_Time_Clock_Report arrived 9/27 6:32 PM CDT. 10/1 MOVE not punch-checked."
+  "timeClock": "EOD mail 10/2 5:50 AM CDT only. Business date 10/1/2026. Attachments: ZReport_Summary, Void_Promo, Hourly_Sales. Void_Promo ignored. Hourly ignored. No Historical/Payroll/Time Clock PDF in same-day mail. Punches not invented. No SSNs or wage rates in git. Last historical filename proof only: 9-20-2026 to 9-26-2026 Historical_Time_Clock_Report arrived 9/27 6:32 PM CDT. 10/1 MOVE not punch-checked."
 }
