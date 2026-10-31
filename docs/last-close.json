@@ -10,7 +10,7 @@
   "verdict": "HOLD",
   "food": "HOLD",
   "source": "ZReport_Summary",
-  "ingestedAt": "2026-10-31T10:43:23Z",
+  "ingestedAt": "2026-10-31T13:13:00Z",
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
   "sentToManager": false,
   "timeClock": "EOD mail 10/31 5:42 AM. Business date 10/30/2026. Attachment: 10-30-2026 ZReport_Summary Community Pizza.pdf. Void_Promo ignored. Hourly ignored. No Historical/Payroll/Time Clock PDF in same day's mail. Punches not invented. No SSNs or wage rates in git. Net=Subtotal $9,333.21. Labor=Labor Summary Total $1,892.74. laborPct 20.28%. Light -$720.56 vs 28% target."
