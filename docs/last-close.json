@@ -13,5 +13,5 @@
   "ingestedAt": "2026-11-01T14:10:00Z",
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
   "sentToManager": false,
-  "timeClock": "EOD mail 11/1 5:46 AM. Business date 10/31/2026. Attachment: 10-31-2026 ZReport_Summary Community Pizza.pdf. Void_Promo ignored. Hourly ignored. No Historical/Payroll/Time Clock PDF in same day's mail. Punches not invented. No SSNs or wage rates in git. Net=Subtotal $10,040.21. Labor=Labor Summary Total $1,843.36. laborPct 18.36%. Light -$967.90 vs 28% target."
+  "timeClock": "EOD mail 11/1 5:46 AM. Business date 10/31/2026. Attachment: 10-31-2026 ZReport_Summary Community Pizza.pdf. Void_Promo ignored. Hourly ignored. Historical Reports 11/1 7:39 AM has Historical_Time_Clock_Report 10-25 to 10-31 as proof. No SSNs or wage rates in git. Punches not invented. Net=Subtotal $10,040.21. Labor=Labor Summary Total $1,843.36. laborPct 18.36%. Light -$967.90 vs 28% target."
 }
