@@ -2,11 +2,11 @@
   "house": "Community Tap",
   "manager": "Kenzy",
   "owner": "Kenzy",
-  "businessDate": "10/31/2026",
+  "businessDate": "11/14/2026",
   "verdict": "MOVE",
   "action": "Cut one mid shift before the rush. Keep the peak staffed.",
   "claimBoundary": "Typed values stay Unverified until reconciled to a source. Variance is review work. Not theft. Not guaranteed savings.",
   "evidenceStatus": "verified",
   "proofKind": "time-clock export",
-  "proofNote": "PDQ Historical Time Clock 10/18/2026-10/31/2026 Community Pizza. Filename: 10-18-2026 to 10-31-2026 Historical_Time_Clock_Report Community Pizza.PDF. File contains punch in/out rows (no SSNs stored; wage rates and payroll pay not stored). Mid-shift clock-outs before dinner appear on multiple days (AM-in punches out roughly 1:24p-5:04p across 10/18-10/31) while peak remains covered by a larger set of clock-ins from ~4p onward. Mid cut before rush vs peak staffed is visible in punches."
+  "proofNote": "PDQ Historical Time Clock 11/1/2026-11/14/2026 Community Pizza. Filename: 11-1-2026 to 11-14-2026 Historical_Time_Clock_Report Community Pizza.PDF. File contains punch in/out rows (no SSNs stored; wage rates and payroll pay not stored). Mid-shift clock-outs before dinner appear on multiple days (AM-in punches out roughly 2:45p-5:32p across 11/1-11/14) while peak remains covered by a larger set of clock-ins from ~3:50p onward. Mid cut before rush vs peak staffed is visible in punches."
 }
