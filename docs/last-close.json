@@ -2,16 +2,16 @@
   "house": "Community Tap",
   "manager": "Kenzy",
   "laborTargetPct": 28,
-  "businessDate": "11/23/2026",
-  "netSales": 3108.08,
-  "laborDollars": 1080.26,
-  "laborPct": 34.76,
-  "heavyDollars": 210.00,
+  "businessDate": "11/24/2026",
+  "netSales": 5343.51,
+  "laborDollars": 1654.85,
+  "laborPct": 30.97,
+  "heavyDollars": 158.67,
   "verdict": "HOLD",
   "food": "HOLD",
   "source": "ZReport_Summary",
-  "ingestedAt": "2026-11-24T14:15:00Z",
+  "ingestedAt": "2026-11-25T12:32:00Z",
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
   "sentToManager": false,
-  "timeClock": "EOD mail 11/24 6:09 AM CDT for business date 11/23/2026. Attachment: 11-23-2026 ZReport_Summary Community Pizza.pdf. Void_Promo and Hourly ignored. No Historical/Payroll/Time Clock PDF in same day's mail. Punches not invented. No SSNs or wage rates in git. Net = Subtotal $3,108.08. Labor = Labor Summary Total $1,080.26. laborPct 34.76%. Heavy $210.00 vs 28% target. Verdict HOLD. Food HOLD."
+  "timeClock": "EOD mail 11/25 6:30 AM CDT for business date 11/24/2026. Attachment: 11-24-2026 ZReport_Summary Community Pizza.pdf. Void_Promo and Hourly ignored. No Historical/Payroll/Time Clock PDF. Punches not invented. No SSNs or wage rates in git. Net = Subtotal $5,343.51. Labor = Labor Summary Total $1,654.85. laborPct 30.97%. Heavy $158.67 vs 28% target. Verdict HOLD. Food HOLD."
 }
