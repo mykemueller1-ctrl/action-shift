@@ -10,8 +10,8 @@
   "verdict": "HOLD",
   "food": "HOLD",
   "source": "ZReport_Summary",
-  "ingestedAt": "2026-11-25T12:32:00Z",
+  "ingestedAt": "2026-11-25T14:15:00Z",
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
   "sentToManager": false,
-  "timeClock": "EOD mail 11/25 6:30 AM CDT for business date 11/24/2026. Attachment: 11-24-2026 ZReport_Summary Community Pizza.pdf. Void_Promo and Hourly ignored. No Historical/Payroll/Time Clock PDF. Punches not invented. No SSNs or wage rates in git. Net = Subtotal $5,343.51. Labor = Labor Summary Total $1,654.85. laborPct 30.97%. Heavy $158.67 vs 28% target. Verdict HOLD. Food HOLD."
+  "timeClock": "EOD mail 11/25 6:30 AM CDT for business date 11/24/2026. Attachment: 11-24-2026 ZReport_Summary Community Pizza.pdf. Void_Promo and Hourly ignored. No Historical/Payroll/Time Clock PDF in same-day mail. Punches not invented. No SSNs or wage rates in git. Net = Subtotal $5,343.51. Labor = Labor Summary Total $1,654.85. laborPct 30.97%. Heavy $158.67 vs 28% target. Verdict HOLD. Food HOLD."
 }
