@@ -1,5 +1,5 @@
 {
-  "house": "Community Pizza",
+  "house": "Community Tap",
   "manager": "Kenzy",
   "laborTargetPct": 28,
   "businessDate": "11/25/2026",
@@ -10,8 +10,8 @@
   "verdict": "HOLD",
   "food": "HOLD",
   "source": "ZReport_Summary",
-  "ingestedAt": "2026-11-26T11:49:00Z",
+  "ingestedAt": "2026-11-26T14:19:00Z",
   "gmailQuery": "from:pdqreports@pdqpos.com newer_than:1d subject:EOD",
   "sentToManager": false,
-  "timeClock": "EOD mail 11/26 5:49 AM CDT for business date 11/25/2026. Attachment: 11-25-2026 ZReport_Summary Community Pizza.pdf. Void_Promo and Hourly ignored. No Historical/Payroll/Time Clock PDF. Punches not invented. No SSNs or wage rates in git. Net = Subtotal $12,734.58. Labor = Labor Summary Total $2,125.59. laborPct 16.69%. Heavy -$1,440.09 vs 28% target. Verdict HOLD. Food HOLD."
+  "timeClock": "EOD mail 11/26 5:49 AM CDT for business date 11/25/2026. Attachment: 11-25-2026 ZReport_Summary Community Pizza.pdf (POS label). Void_Promo and Hourly ignored. No Historical/Payroll/Time Clock PDF in same day's mail. Punches not invented. No SSNs or wage rates in git. Net = Subtotal $12,734.58. Labor = Labor Summary Total $2,125.59. laborPct 16.69%. Heavy -$1,440.09 vs 28% target. Verdict HOLD. Food HOLD."
 }
